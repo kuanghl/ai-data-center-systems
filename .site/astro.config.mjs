@@ -240,13 +240,13 @@ export default defineConfig({
       customCss: ['./src/styles/custom.css'],
       lastUpdated: true,
       editLink: {
-        baseUrl: 'https://github.com/ziwon/ai-data-center-systems/edit/main/.site/',
+        baseUrl: 'https://github.com/kuanghl/ai-data-center-systems/edit/main/.site/',
       },
       social: [
         {
           icon: 'github',
           label: 'GitHub',
-          href: 'https://github.com/ziwon/ai-data-center-systems',
+          href: 'https://github.com/kuanghl/ai-data-center-systems',
         },
       ],
       tableOfContents: {

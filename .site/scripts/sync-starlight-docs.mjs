@@ -14,7 +14,7 @@ const publicOut = path.join(projectRoot, 'public');
 const conceptsPath = path.join(projectRoot, 'kb', 'concepts.json');
 const siteUrl = 'https://adcs.restack.tech';
 const ogImageRevision = '2';
-const repositoryEditBase = 'https://github.com/ziwon/ai-data-center-systems/edit/main/';
+const repositoryEditBase = 'https://github.com/kuanghl/ai-data-center-systems/edit/main/';
 
 const docRoots = [
   'network',
@@ -617,7 +617,7 @@ function rewriteMarkdown(markdown, sourceRelative) {
     .replace(/(\]\()([^)\s]+?\.md)(#[^)]+)?(\))/g, (_, open, href, hash = '', close) => {
       if (isExternalLink(href)) return `${open}${href}${hash}${close}`;
       if (href === 'AGENTS.md' || href.endsWith('/AGENTS.md')) {
-        return `${open}https://github.com/ziwon/ai-data-center-systems/blob/main/${resolveSourceHref(
+        return `${open}https://github.com/kuanghl/ai-data-center-systems/blob/main/${resolveSourceHref(
           href,
           sourceRelative,
         )}${hash}${close}`;
