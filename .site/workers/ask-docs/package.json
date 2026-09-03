@@ -1,0 +1,15 @@
+{
+  "name": "ask-docs-worker",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "wrangler dev",
+    "deploy": "wrangler deploy",
+    "seed:kb": "node scripts/seed-kb-d1.mjs",
+    "seed:kb:remote": "node scripts/seed-kb-d1.mjs --remote"
+  },
+  "devDependencies": {
+    "wrangler": "^4.23.0"
+  }
+}
