@@ -6,6 +6,9 @@ import {
 } from './route-mappings.mjs';
 
 const distRoot = path.join(process.cwd(), 'dist');
+// GitHub Pages serves the gh-pages branch under this subpath, so browser-absolute
+// redirect URLs must include it even though dist itself is laid out flat.
+const basePath = '/ai-data-center-systems';
 const errors = [];
 
 const canonicalRoutes = [
@@ -57,7 +60,7 @@ for (const { from, to } of legacyMappings) {
       .split(path.sep)
       .filter((segment) => segment && segment !== '.')
       .join('/');
-    const targetRoute = `${to}${relativeDirectory ? `/${relativeDirectory}` : ''}/`;
+    const targetRoute = `${basePath}${to}${relativeDirectory ? `/${relativeDirectory}` : ''}/`;
     const redirectHtml = await readFile(redirectFile, 'utf8');
     if (!redirectHtml.includes(`content="0;url=${targetRoute}"`)) {
       errors.push(`${from}/${relativeDirectory} does not redirect to ${targetRoute}.`);
@@ -65,8 +68,9 @@ for (const { from, to } of legacyMappings) {
     if (!redirectHtml.includes('<meta name="robots" content="noindex">')) {
       errors.push(`${from}/${relativeDirectory} is missing the noindex directive.`);
     }
+    // dist is laid out flat; the base path only exists in the deployed URL.
     await expectFile(
-      path.join(distRoot, targetRoute.slice(1), 'index.html'),
+      path.join(distRoot, to.slice(1), relativeDirectory, 'index.html'),
       `redirect target ${targetRoute}`,
     );
   }
@@ -74,7 +78,6 @@ for (const { from, to } of legacyMappings) {
 
 await validateTalkDeck('/talks/sr-iov-with-dgx-b200/');
 
-await expectFile(path.join(distRoot, 'CNAME'), 'custom-domain CNAME');
 await expectFile(path.join(distRoot, 'llms.txt'), 'llms.txt');
 await expectFile(path.join(distRoot, 'llms-full.txt'), 'llms-full.txt');
 await expectFile(path.join(distRoot, 'kb', 'dcs-kb-graph.json'), 'global knowledge graph');
