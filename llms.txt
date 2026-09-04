@@ -1,0 +1,110 @@
+# AI Data Center Systems
+
+AI data center networking, LLM inference, training, MLOps, storage, and systems performance engineering study notes.
+
+## Docs
+
+- [AI Data Center Systems](https://kuanghl.github.io/ai-data-center-systems/) - index.md
+- [The Present and Future of Cloud Data Center Networks](https://kuanghl.github.io/ai-data-center-systems/network/articles/cloud-data-center-network-now-and-next.ko/) - network/articles/cloud-data-center-network-now-and-next.ko.md
+- [Chapter 1: Wonders in the Workload](https://kuanghl.github.io/ai-data-center-systems/network/chap01/) - network/chap01/index.md
+- [Chapter 2: "The Common-Man View" of AI Data Center Fabrics](https://kuanghl.github.io/ai-data-center-systems/network/chap02/) - network/chap02/index.md
+- [Chapter 3: Network Design Considerations](https://kuanghl.github.io/ai-data-center-systems/network/chap03/) - network/chap03/index.md
+- [Chapter 4: Optics and Cable Management](https://kuanghl.github.io/ai-data-center-systems/network/chap04/) - network/chap04/index.md
+- [Chapter 5: Thermal and Power Efficiency Considerations](https://kuanghl.github.io/ai-data-center-systems/network/chap05/) - network/chap05/index.md
+- [Chapter 6: Efficient Load Balancing](https://kuanghl.github.io/ai-data-center-systems/network/chap06/) - network/chap06/index.md
+- [Chapter 7: RoCEv2 Transport and Congestion Management](https://kuanghl.github.io/ai-data-center-systems/network/chap07/) - network/chap07/index.md
+- [Chapter 8: IP Routing for AI/ML Fabrics](https://kuanghl.github.io/ai-data-center-systems/network/chap08/) - network/chap08/index.md
+- [Chapter 9: Storage Network Design and Technologies for AI Data Centers](https://kuanghl.github.io/ai-data-center-systems/network/chap09/) - network/chap09/index.md
+- [Chapter 10: AI Network Performance KPIs](https://kuanghl.github.io/ai-data-center-systems/network/chap10/) - network/chap10/index.md
+- [Chapter 11: Monitoring and Telemetry](https://kuanghl.github.io/ai-data-center-systems/network/chap11/) - network/chap11/index.md
+- [Chapter 12: Ultra Ethernet Consortium, UEC](https://kuanghl.github.io/ai-data-center-systems/network/chap12/) - network/chap12/index.md
+- [Clos Fabric Lab Series](https://kuanghl.github.io/ai-data-center-systems/network/clos-ebgp-lab/) - network/clos-ebgp-lab/index.md
+- [Appendix: BGP-based Underlay and GLB NNHN in AI Data Center Fabrics](https://kuanghl.github.io/ai-data-center-systems/network/glb-nnhn-bgp-underlay/) - network/glb-nnhn-bgp-underlay/index.md
+- [GPU 클러스터 장애 분석: ECC, Xid, RDMA, NCCL Hang은 어떻게 연결되는가](https://kuanghl.github.io/ai-data-center-systems/network/gpu-cluster-failure-analysis/) - network/gpu-cluster-failure-analysis/index.md
+- [InfiniBand Packet Analysis: A Practical RDMA Transport Primer](https://kuanghl.github.io/ai-data-center-systems/network/ib-packet-analysis/) - network/ib-packet-analysis/index.md
+- [InfiniBand 패킷 형식 참조 문서](https://kuanghl.github.io/ai-data-center-systems/network/ib-packet-analysis/packet-format-reference_KO/) - network/ib-packet-analysis/packet-format-reference_KO.md
+- [InfiniBand Packet Format Reference](https://kuanghl.github.io/ai-data-center-systems/network/ib-packet-analysis/packet-format-reference/) - network/ib-packet-analysis/packet-format-reference.md
+- [InfiniBand 패킷 분석: 실전 RDMA 전송 입문서](https://kuanghl.github.io/ai-data-center-systems/network/ib-packet-analysis/README_KO/) - network/ib-packet-analysis/README_KO.md
+- [AI Data Center Network](https://kuanghl.github.io/ai-data-center-systems/network/) - network/index.md
+- [RDMA Read/Write 실전 입문](https://kuanghl.github.io/ai-data-center-systems/network/rdma-examples/) - network/rdma-examples/index.md
+- [GPU Architecture (reference)](https://kuanghl.github.io/ai-data-center-systems/gpu/appendix/architecture/) - gpu/appendix/architecture/index.md
+- [CUDA (reference)](https://kuanghl.github.io/ai-data-center-systems/gpu/appendix/cuda/) - gpu/appendix/cuda/index.md
+- [GPU Appendix](https://kuanghl.github.io/ai-data-center-systems/gpu/appendix/) - gpu/appendix/index.md
+- [HAMi-core 심층 분석: `libvgpu.so`는 GPU를 어떻게 나누는가](https://kuanghl.github.io/ai-data-center-systems/gpu/articles/hami-core-deep-dive.ko/) - gpu/articles/hami-core-deep-dive.ko.md
+- [DRA와 HAMi로 보는 Kubernetes GPU 분할](https://kuanghl.github.io/ai-data-center-systems/gpu/articles/hami-dra-gpu-sharing.ko/) - gpu/articles/hami-dra-gpu-sharing.ko.md
+- [GPU Articles](https://kuanghl.github.io/ai-data-center-systems/gpu/articles/) - gpu/articles/index.md
+- [Stanford CS149 / Parallel Computing](https://kuanghl.github.io/ai-data-center-systems/gpu/cs149/) - gpu/cs149/index.md
+- [Lecture 1: Why Parallelism? Why Efficiency?](https://kuanghl.github.io/ai-data-center-systems/gpu/cs149/lec01/) - gpu/cs149/lec01/index.md
+- [Lecture 2: A Modern Multi-Core Processor](https://kuanghl.github.io/ai-data-center-systems/gpu/cs149/lec02/) - gpu/cs149/lec02/index.md
+- [Lecture 3: Multi-Core Architecture, Part II and ISPC](https://kuanghl.github.io/ai-data-center-systems/gpu/cs149/lec03/) - gpu/cs149/lec03/index.md
+- [Lecture 4: Parallel Programming Basics](https://kuanghl.github.io/ai-data-center-systems/gpu/cs149/lec04/) - gpu/cs149/lec04/index.md
+- [GPU MODE](https://kuanghl.github.io/ai-data-center-systems/gpu/gpu-mode/) - gpu/gpu-mode/index.md
+- [Heterogeneous Systems (Onur Mutlu)](https://kuanghl.github.io/ai-data-center-systems/gpu/heterogeneous-systems/) - gpu/heterogeneous-systems/index.md
+- [GPU Systems](https://kuanghl.github.io/ai-data-center-systems/gpu/) - gpu/index.md
+- [GPU Labs](https://kuanghl.github.io/ai-data-center-systems/gpu/labs/) - gpu/labs/index.md
+- [Kernel Case Studies (practice)](https://kuanghl.github.io/ai-data-center-systems/gpu/labs/kernels/) - gpu/labs/kernels/index.md
+- [Profiling (practice)](https://kuanghl.github.io/ai-data-center-systems/gpu/labs/profiling/) - gpu/labs/profiling/index.md
+- [PMPP / Programming Massively Parallel Processors](https://kuanghl.github.io/ai-data-center-systems/gpu/pmpp/) - gpu/pmpp/index.md
+- [Lecture 2: Data Parallel Programming and the CUDA Programming Model](https://kuanghl.github.io/ai-data-center-systems/gpu/pmpp/lec02/) - gpu/pmpp/lec02/index.md
+- [Lecture 3: Multidimensional Grids and Data](https://kuanghl.github.io/ai-data-center-systems/gpu/pmpp/lec03/) - gpu/pmpp/lec03/index.md
+- [Lecture 4: GPU Architecture](https://kuanghl.github.io/ai-data-center-systems/gpu/pmpp/lec04/) - gpu/pmpp/lec04/index.md
+- [Lecture 5: Memory Architecture and Tiling](https://kuanghl.github.io/ai-data-center-systems/gpu/pmpp/lec05/) - gpu/pmpp/lec05/index.md
+- [MLPerf Training](https://kuanghl.github.io/ai-data-center-systems/training/) - training/index.md
+- [Domain-Specific Architectures for AI Inference](https://kuanghl.github.io/ai-data-center-systems/inference/efficient-llm-inference-systems/appendix/hardware-architectures/domain-specific-architectures-for-ai-inference.ko/) - inference/efficient-llm-inference-systems/appendix/hardware-architectures/domain-specific-architectures-for-ai-inference.ko.md
+- [How to Think About GPUs](https://kuanghl.github.io/ai-data-center-systems/inference/efficient-llm-inference-systems/appendix/hardware-architectures/gpus.ko/) - inference/efficient-llm-inference-systems/appendix/hardware-architectures/gpus.ko.md
+- [Hardware Architectures for LLM Inference](https://kuanghl.github.io/ai-data-center-systems/inference/efficient-llm-inference-systems/appendix/hardware-architectures/) - inference/efficient-llm-inference-systems/appendix/hardware-architectures/index.md
+- [How to Think About NPUs](https://kuanghl.github.io/ai-data-center-systems/inference/efficient-llm-inference-systems/appendix/hardware-architectures/npus.ko/) - inference/efficient-llm-inference-systems/appendix/hardware-architectures/npus.ko.md
+- [All About Rooflines](https://kuanghl.github.io/ai-data-center-systems/inference/efficient-llm-inference-systems/appendix/hardware-architectures/roofline.ko/) - inference/efficient-llm-inference-systems/appendix/hardware-architectures/roofline.ko.md
+- [How to Think About TPUs](https://kuanghl.github.io/ai-data-center-systems/inference/efficient-llm-inference-systems/appendix/hardware-architectures/tpus.ko/) - inference/efficient-llm-inference-systems/appendix/hardware-architectures/tpus.ko.md
+- [Appendix](https://kuanghl.github.io/ai-data-center-systems/inference/efficient-llm-inference-systems/appendix/) - inference/efficient-llm-inference-systems/appendix/index.md
+- [LLM Inference](https://kuanghl.github.io/ai-data-center-systems/inference/efficient-llm-inference-systems/appendix/llm-inference/) - inference/efficient-llm-inference-systems/appendix/llm-inference/index.md
+- [Transformer](https://kuanghl.github.io/ai-data-center-systems/inference/efficient-llm-inference-systems/appendix/transformer/) - inference/efficient-llm-inference-systems/appendix/transformer/index.md
+- [Efficient LLM Inference Systems](https://kuanghl.github.io/ai-data-center-systems/inference/efficient-llm-inference-systems/) - inference/efficient-llm-inference-systems/index.md
+- [Efficient LLM Inference Systems](https://kuanghl.github.io/ai-data-center-systems/inference/efficient-llm-inference-systems/week01/) - inference/efficient-llm-inference-systems/week01/index.md
+- [Week 2 — Hardware Foundations for Inference](https://kuanghl.github.io/ai-data-center-systems/inference/efficient-llm-inference-systems/week02/) - inference/efficient-llm-inference-systems/week02/index.md
+- [Week 3 — Transformer Inference and the KV Cache](https://kuanghl.github.io/ai-data-center-systems/inference/efficient-llm-inference-systems/week03/) - inference/efficient-llm-inference-systems/week03/index.md
+- [Week 4 — Quantization](https://kuanghl.github.io/ai-data-center-systems/inference/efficient-llm-inference-systems/week04/) - inference/efficient-llm-inference-systems/week04/index.md
+- [Week 4 Lab Results](https://kuanghl.github.io/ai-data-center-systems/inference/efficient-llm-inference-systems/week04/results/RESULTS/) - inference/efficient-llm-inference-systems/week04/results/RESULTS.md
+- [Week 5 — Speculative Decoding](https://kuanghl.github.io/ai-data-center-systems/inference/efficient-llm-inference-systems/week05/) - inference/efficient-llm-inference-systems/week05/index.md
+- [FlashAttention from First Principles](https://kuanghl.github.io/ai-data-center-systems/inference/flashattention-from-first-principles/) - inference/flashattention-from-first-principles/index.md
+- [원리로 이해하는 FlashAttention](https://kuanghl.github.io/ai-data-center-systems/inference/flashattention-from-first-principles/README.ko/) - inference/flashattention-from-first-principles/README.ko.md
+- [Inference](https://kuanghl.github.io/ai-data-center-systems/inference/) - inference/index.md
+- [Model Architecture and Serving Profiles](https://kuanghl.github.io/ai-data-center-systems/inference/models/) - inference/models/index.md
+- [How We Scaled Kimi K2.5: 토큰 효율, 장문 컨텍스트, 에이전트 스웜](https://kuanghl.github.io/ai-data-center-systems/inference/models/kimi-k2-5-scaling/) - inference/models/kimi-k2-5-scaling.md
+- [Kimi K3 기술 해부: 2.8T MoE, KDA, Attention Residuals, 그리고 64-GPU 서빙](https://kuanghl.github.io/ai-data-center-systems/inference/models/kimi-k3/) - inference/models/kimi-k3.md
+- [SGLang in 2026: Engineering a Production-Grade LLM Serving Stack](https://kuanghl.github.io/ai-data-center-systems/inference/sglang-production-practices/) - inference/sglang-production-practices/index.md
+- [MLOps: 모델을 배포하는 기술이 아니라 변경을 통제하는 운영 시스템](https://kuanghl.github.io/ai-data-center-systems/mlops/) - mlops/index.md
+- [Storage](https://kuanghl.github.io/ai-data-center-systems/storage/) - storage/index.md
+- [MLPerf Storage Benchmark](https://kuanghl.github.io/ai-data-center-systems/storage/mlperf-storage/) - storage/mlperf-storage/index.md
+- [AI 학습 워크로드를 위한 ZFS 튜닝 가이드](https://kuanghl.github.io/ai-data-center-systems/storage/zfs/) - storage/zfs/index.md
+- [Keeping GPU Workloads NUMA-Local in Kubernetes](https://kuanghl.github.io/ai-data-center-systems/systems-performance/articles/keeping-gpu-workloads-numa-local-in-kubernetes.ko/) - systems-performance/articles/keeping-gpu-workloads-numa-local-in-kubernetes.ko.md
+- [Never Underestimate Memory Architecture](https://kuanghl.github.io/ai-data-center-systems/systems-performance/articles/never-underestimate-memory-architecture.ko/) - systems-performance/articles/never-underestimate-memory-architecture.ko.md
+- [Chapter 1: Introduction and AI System Overview](https://kuanghl.github.io/ai-data-center-systems/systems-performance/chap01/) - systems-performance/chap01/index.md
+- [Chapter 2: AI System Hardware Overview](https://kuanghl.github.io/ai-data-center-systems/systems-performance/chap02/) - systems-performance/chap02/index.md
+- [Chapter 3: OS, Docker, and Kubernetes Tuning for GPU-Based Environments](https://kuanghl.github.io/ai-data-center-systems/systems-performance/chap03/) - systems-performance/chap03/index.md
+- [Chapter 4: Tuning Distributed Networking Communication](https://kuanghl.github.io/ai-data-center-systems/systems-performance/chap04/) - systems-performance/chap04/index.md
+- [Chapter 5: GPU-Based Storage I/O Optimizations](https://kuanghl.github.io/ai-data-center-systems/systems-performance/chap05/) - systems-performance/chap05/index.md
+- [AI Systems Performance Engineering](https://kuanghl.github.io/ai-data-center-systems/systems-performance/) - systems-performance/index.md
+- [Lab: Communication and Computation Overlap](https://kuanghl.github.io/ai-data-center-systems/systems-performance/labs/ch04/communication-overlap/) - systems-performance/labs/ch04/communication-overlap/index.md
+- [Lab: Communicator Lifecycle](https://kuanghl.github.io/ai-data-center-systems/systems-performance/labs/ch04/communicator-lifecycle/) - systems-performance/labs/ch04/communicator-lifecycle/index.md
+- [Lab: DataParallel vs DDP](https://kuanghl.github.io/ai-data-center-systems/systems-performance/labs/ch04/dataparallel-vs-ddp/) - systems-performance/labs/ch04/dataparallel-vs-ddp/index.md
+- [Lab: GPU Communication Reference](https://kuanghl.github.io/ai-data-center-systems/systems-performance/labs/ch04/gpu-communication-reference/) - systems-performance/labs/ch04/gpu-communication-reference/index.md
+- [Lab: Gradient Bucketing, Fusion, and Compression](https://kuanghl.github.io/ai-data-center-systems/systems-performance/labs/ch04/gradient-bucketing/) - systems-performance/labs/ch04/gradient-bucketing/index.md
+- [Chapter 4 Labs](https://kuanghl.github.io/ai-data-center-systems/systems-performance/labs/ch04/) - systems-performance/labs/ch04/index.md
+- [Lab: NIXL-Style Tier Handoff](https://kuanghl.github.io/ai-data-center-systems/systems-performance/labs/ch04/nixl-tier-handoff/) - systems-performance/labs/ch04/nixl-tier-handoff/index.md
+- [Lab: Pipeline and Tensor Parallel Scheduling](https://kuanghl.github.io/ai-data-center-systems/systems-performance/labs/ch04/pipeline-tensor-parallel/) - systems-performance/labs/ch04/pipeline-tensor-parallel/index.md
+- [Lab: Symmetric Memory and NVSHMEM Patterns](https://kuanghl.github.io/ai-data-center-systems/systems-performance/labs/ch04/symmetric-memory-nvshmem/) - systems-performance/labs/ch04/symmetric-memory-nvshmem/index.md
+- [Lab: Topology-Aware Bandwidth](https://kuanghl.github.io/ai-data-center-systems/systems-performance/labs/ch04/topology-aware-bandwidth/) - systems-performance/labs/ch04/topology-aware-bandwidth/index.md
+- [CME295 Lecture Notes](https://kuanghl.github.io/ai-data-center-systems/courses/cme295/) - courses/cme295/index.md
+- [Lecture 1: Transformer](https://kuanghl.github.io/ai-data-center-systems/courses/cme295/lec-01/) - courses/cme295/lec-01/index.md
+- [Lecture 2: Transformer-Based Models & Tricks](https://kuanghl.github.io/ai-data-center-systems/courses/cme295/lec-02/) - courses/cme295/lec-02/index.md
+- [Lecture 3: Large Language Models, Decoding, Prompting, and Inference](https://kuanghl.github.io/ai-data-center-systems/courses/cme295/lec-03/) - courses/cme295/lec-03/index.md
+- [Lecture 4: LLM Training, Fine-Tuning, and Efficient Adaptation](https://kuanghl.github.io/ai-data-center-systems/courses/cme295/lec-04/) - courses/cme295/lec-04/index.md
+- [Lecture 5: LLM Tuning and Human Preferences](https://kuanghl.github.io/ai-data-center-systems/courses/cme295/lec-05/) - courses/cme295/lec-05/index.md
+- [Lecture 6: LLM Reasoning and GRPO](https://kuanghl.github.io/ai-data-center-systems/courses/cme295/lec-06/) - courses/cme295/lec-06/index.md
+- [Deep Learning for Network Engineers](https://kuanghl.github.io/ai-data-center-systems/courses/deep-learning-for-network-engineers/) - courses/deep-learning-for-network-engineers/index.md
+- [Week 1: From Artificial Neuron to AI Training Fabric](https://kuanghl.github.io/ai-data-center-systems/courses/deep-learning-for-network-engineers/week01/) - courses/deep-learning-for-network-engineers/week01/index.md
+- [Week 2: Large Language Model, LLM](https://kuanghl.github.io/ai-data-center-systems/courses/deep-learning-for-network-engineers/week02/) - courses/deep-learning-for-network-engineers/week02/index.md
+- [Week 3: Parallelism Strategies in Deep Learning](https://kuanghl.github.io/ai-data-center-systems/courses/deep-learning-for-network-engineers/week03/) - courses/deep-learning-for-network-engineers/week03/index.md
+- [Week 4: RDMA and GPU Cluster Communication](https://kuanghl.github.io/ai-data-center-systems/courses/deep-learning-for-network-engineers/week04/) - courses/deep-learning-for-network-engineers/week04/index.md
+- [Courses](https://kuanghl.github.io/ai-data-center-systems/courses/) - courses/index.md
