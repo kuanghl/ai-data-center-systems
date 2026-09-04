@@ -1,0 +1,15 @@
+.lang-switch {
+  margin-left: 0.8rem;
+  padding: 0.3rem 0.65rem;
+  border: 1px solid var(--vp-c-divider);
+  border-radius: 0.4rem;
+  background: transparent;
+  color: var(--vp-c-text-1);
+  font-size: 0.85rem;
+  cursor: pointer;
+}
+
+.lang-switch:hover {
+  border-color: var(--vp-c-brand-1);
+  color: var(--vp-c-brand-1);
+}

@@ -1,6 +1,6 @@
 # InfiniBand 패킷 분석: 실전 RDMA 전송 입문서
 
-[English](README.md) | **한국어**
+[English](./) | **한국어**
 
 [![NVIDIA](https://img.shields.io/badge/NVIDIA-Networking-76B900?logo=nvidia&logoColor=white)](https://www.nvidia.com/en-us/networking/)
 [![RDMA](https://img.shields.io/badge/RDMA-Zero--Copy-0078D4)](https://docs.nvidia.com/networking/display/rdmaawareprogrammingv17)
@@ -11,7 +11,7 @@
 이 보고서는 `ib-packets` 디렉터리의 패킷 캡처를 `tshark`로 분석합니다. 목표는 캡처된 패킷을 1장의 RDMA 및 InfiniBand 노트와 다시 연결하는 것입니다. 즉, 데이터 경로 vs 제어 경로, InfiniBand 패킷 구조, 관리 트래픽, IP over InfiniBand, Queue Pair, Reliable Connection 동작입니다.
 
 <p align="center">
-  <img src="ib-packet-analysis.png" alt="ib packet analysis">
+  <img src="./ib-packet-analysis.png" alt="ib packet analysis">
 </p>
 
 ## 목차

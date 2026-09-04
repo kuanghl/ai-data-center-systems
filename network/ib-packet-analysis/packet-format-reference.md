@@ -2,7 +2,7 @@
 
 **English** | [English edition](packet-format-reference_KO.md)
 
-This document is a bit-level reference for InfiniBand packet headers, intended as a companion to the [main analysis report](README.md). The report focuses on what was observed in the `ib-packets` dataset; this reference focuses on what every IB packet header looks like on the wire, with anchor links back to the report's frame-level evidence wherever a concrete example exists.
+This document is a bit-level reference for InfiniBand packet headers, intended as a companion to the [main analysis report](./). The report focuses on what was observed in the `ib-packets` dataset; this reference focuses on what every IB packet header looks like on the wire, with anchor links back to the report's frame-level evidence wherever a concrete example exists.
 
 Use this reference when:
 
@@ -87,7 +87,7 @@ LNH encoding:
 | `0x2` | IBA Local | BTH (no GRH) |
 | `0x3` | IBA Global | GRH + BTH |
 
-Concrete example: every packet in this dataset carries `LNH = 0x2`, which is why no GRH is decoded. See the worked example for `infiniband.pcap` frame 10 in the main report's [ERF Capture Anatomy](README.md#erf-capture-anatomy) section.
+Concrete example: every packet in this dataset carries `LNH = 0x2`, which is why no GRH is decoded. See the worked example for `infiniband.pcap` frame 10 in the main report's [ERF Capture Anatomy](./#erf-capture-anatomy) section.
 
 ## Global Route Header (GRH) — 40 bytes
 
@@ -230,7 +230,7 @@ OpCode values:
 | `10` | Reserved | — |
 | `11` | NAK | NAK code: `0`=PSN seq error, `1`=invalid request, `2`=remote access error, `3`=remote operation error, `4`=invalid RD request |
 
-Concrete example: `infiniband.pcap` frame 11 has `Syndrome = 31` decimal = `0x1F` = `0 00 11111`. This decodes to `OpCode = 00 (ACK), Value = 11111 (no credit info)` — a normal acknowledgment with no flow-control hint. See the [main report's frame-11 mapping](README.md#infinibandpcap) for context.
+Concrete example: `infiniband.pcap` frame 11 has `Syndrome = 31` decimal = `0x1F` = `0 00 11111`. This decodes to `OpCode = 00 (ACK), Value = 11111 (no credit info)` — a normal acknowledgment with no flow-control hint. See the [main report's frame-11 mapping](./#infinibandpcap) for context.
 
 ### AtomicETH — 28 bytes
 
@@ -370,7 +370,7 @@ EtherType values seen:
 
 IPoIB ARP, despite the EtherType, is not the same as Ethernet ARP. RFC 4391 defines a 20-byte hardware address: `QPN (24 bits) + Reserved (8 bits) + GID (128 bits)`. This is why `ib_ipping_sniffer.pcap` shows ARP records that look familiar but carry IB-specific addressing inside.
 
-Concrete example: `infiniband.pcap` frame 10 has `EtherType=0x0800, Reserved=0x0000`, followed directly by an IPv4 ICMP Echo request. See the main report's [worked example](README.md#erf-capture-anatomy).
+Concrete example: `infiniband.pcap` frame 10 has `EtherType=0x0800, Reserved=0x0000`, followed directly by an IPv4 ICMP Echo request. See the main report's [worked example](./#erf-capture-anatomy).
 
 ## CRC Coverage
 
@@ -391,7 +391,7 @@ Mutable fields excluded from ICRC include:
 - `BTH.FECN` / `BECN` — set by congestion-notification points
 - `BTH` reserved variant bits
 
-In the ERF captures both CRCs are exposed as filterable fields (`infiniband.invariant.crc` and `infiniband.variant.crc`). The Wireshark dissector does not validate them; trust `erf.flags.rxe` instead. See the main report's [preservation matrix](README.md#what-erf-preserves-vs-hides) for details.
+In the ERF captures both CRCs are exposed as filterable fields (`infiniband.invariant.crc` and `infiniband.variant.crc`). The Wireshark dissector does not validate them; trust `erf.flags.rxe` instead. See the main report's [preservation matrix](./#what-erf-preserves-vs-hides) for details.
 
 ## BTH Opcode Master Table
 
@@ -503,9 +503,9 @@ Last:    LRH → BTH(RDMA READ Response Last)    → AETH → payload → ICRC �
 
 ## See Also
 
-- [Main analysis report](README.md) — observed evidence from the `ib-packets` dataset
-- [ERF Capture Anatomy](README.md#erf-capture-anatomy) — what the ERF outer record exposes vs hides
-- [RDMA Read/Write Packet Analysis Model](README.md#rdma-readwrite-packet-analysis-model) — operation flows and validation rules
+- [Main analysis report](./) — observed evidence from the `ib-packets` dataset
+- [ERF Capture Anatomy](./#erf-capture-anatomy) — what the ERF outer record exposes vs hides
+- [RDMA Read/Write Packet Analysis Model](./#rdma-readwrite-packet-analysis-model) — operation flows and validation rules
 - IBA Architecture Specification Volume 1, Release 1.5
 - Wireshark IB dissector field list: `tshark -G fields | grep -i infiniband`
 - [Tencent Cloud: RDMA - IB Specification Volume 1 Transport Layer](https://cloud.tencent.com/developer/article/2513460)

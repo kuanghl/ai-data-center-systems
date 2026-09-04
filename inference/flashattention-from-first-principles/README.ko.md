@@ -1,6 +1,6 @@
 # 원리로 이해하는 FlashAttention
 
-[English](README.md) | **한국어**
+[English](./) | **한국어**
 
 > **Exact attention 최적화가 Ampere에서 Blackwell에 이르기까지 I/O·병렬성·파이프라인 설계 문제로 확장된 과정**
 

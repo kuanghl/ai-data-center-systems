@@ -1,4 +1,0 @@
-User-agent: *
-Allow: /
-
-Sitemap: https://kuanghl.github.io/ai-data-center-systems/sitemap-index.xml

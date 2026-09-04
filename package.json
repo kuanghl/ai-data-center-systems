@@ -1,0 +1,19 @@
+{
+  "name": "ai-data-center-systems",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "prebuild": "node scripts/prebuild.mjs",
+    "build": "vitepress build",
+    "postbuild": "node scripts/postbuild.mjs",
+    "dev": "npm run prebuild && vitepress dev"
+  },
+  "devDependencies": {
+    "katex": "^0.18.5",
+    "markdown-it-katex": "^2.0.3",
+    "mermaid": "^11.15.0",
+    "vitepress": "^1.6.4",
+    "vitepress-plugin-mermaid": "^2.0.17"
+  }
+}
