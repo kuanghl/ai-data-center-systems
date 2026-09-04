@@ -12,6 +12,7 @@ import starlightImageZoom from 'starlight-image-zoom';
 import starlightSidebarTopics from 'starlight-sidebar-topics';
 import { legacyMappings, legacyRoutePrefixes } from './scripts/route-mappings.mjs';
 
+const basePath = '/ai-data-center-systems';
 const googleAnalyticsId = getGoogleTagId('PUBLIC_GA_MEASUREMENT_ID', /^G-[A-Z0-9]+$/);
 const googleAdSenseClient =
   getGoogleTagId('PUBLIC_GOOGLE_ADSENSE_CLIENT', /^ca-pub-\d+$/) ?? 'ca-pub-8128231647578658';
@@ -25,7 +26,7 @@ function buildLegacyRedirects(mappings) {
       );
       return collectDocumentSuffixes(docsDirectory).map((suffix) => [
         `${from}${suffix ? `/${suffix}` : ''}`,
-        `${to}${suffix ? `/${suffix}` : ''}/`,
+        `${basePath}${to}${suffix ? `/${suffix}` : ''}/`,
       ]);
     }),
   );
@@ -91,7 +92,8 @@ function googleAdSenseHeadEntries(client) {
 }
 
 export default defineConfig({
-  site: 'https://adcs.restack.tech',
+  site: 'https://kuanghl.github.io/ai-data-center-systems',
+  base: `${basePath}/`,
   trailingSlash: 'always',
   redirects: legacyRedirects,
   markdown: {
@@ -195,7 +197,7 @@ export default defineConfig({
       title: 'AI Data Center Systems',
       description:
         'AI data center networking, LLM inference, training, MLOps, storage, and systems performance engineering study notes.',
-      favicon: '/favicon.svg',
+      favicon: '/ai-data-center-systems/favicon.svg',
       components: {
         Header: './src/components/Header.astro',
         PageFrame: './src/components/PageFrame.astro',
@@ -206,7 +208,7 @@ export default defineConfig({
         ...googleAdSenseHeadEntries(googleAdSenseClient),
         {
           tag: 'meta',
-          attrs: { property: 'og:image', content: 'https://adcs.restack.tech/og.png' },
+          attrs: { property: 'og:image', content: 'https://kuanghl.github.io/ai-data-center-systems/og.png' },
         },
         {
           tag: 'meta',
@@ -222,7 +224,7 @@ export default defineConfig({
         },
         {
           tag: 'meta',
-          attrs: { name: 'twitter:image', content: 'https://adcs.restack.tech/og.png' },
+          attrs: { name: 'twitter:image', content: 'https://kuanghl.github.io/ai-data-center-systems/og.png' },
         },
         {
           tag: 'meta',
@@ -234,7 +236,7 @@ export default defineConfig({
         },
         {
           tag: 'script',
-          attrs: { src: '/translate-init.js' },
+          attrs: { src: '/ai-data-center-systems/translate-init.js' },
         },
       ],
       customCss: ['./src/styles/custom.css'],

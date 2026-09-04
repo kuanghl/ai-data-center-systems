@@ -2,7 +2,7 @@
 // Standalone admin page — no Starlight layout
 ---
 <!doctype html>
-<html lang="ko">
+<html lang="en">
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
@@ -279,13 +279,13 @@
       <span class="eyebrow">AI Data Center Systems</span>
       <h1>Q&amp;A Logs</h1>
     </div>
-    <a class="header-link" href="/">← 사이트로 돌아가기</a>
+    <a class="header-link" href="/">← Back to site</a>
   </header>
 
   <div class="auth-bar">
     <label for="token-input">Admin Token</label>
-    <input id="token-input" type="password" placeholder="x-admin-token 값 입력" autocomplete="off" />
-    <span class="auth-status" id="auth-status">미인증</span>
+    <input id="token-input" type="password" placeholder="Enter x-admin-token value" autocomplete="off" />
+    <span class="auth-status" id="auth-status">Unauthenticated</span>
   </div>
 
   <div class="controls">
@@ -293,7 +293,7 @@
       <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.8">
         <circle cx="8.5" cy="8.5" r="5.5"/><path d="M13.5 13.5L17 17"/>
       </svg>
-      <input class="search-input" id="search-input" type="search" placeholder="질문 검색..." />
+      <input class="search-input" id="search-input" type="search" placeholder="Search questions..." />
     </div>
     <span class="meta" id="meta-info"></span>
   </div>
@@ -303,21 +303,21 @@
       <thead>
         <tr>
           <th class="col-id">#</th>
-          <th class="col-time">시간</th>
-          <th class="col-q">질문</th>
-          <th class="col-a">답변 미리보기</th>
+          <th class="col-time">Time</th>
+          <th class="col-q">Question</th>
+          <th class="col-a">Answer preview</th>
         </tr>
       </thead>
       <tbody id="log-body">
-        <tr class="state-row"><td colspan="4">Token을 입력하면 로그를 불러옵니다.</td></tr>
+        <tr class="state-row"><td colspan="4">Enter token to load logs.</td></tr>
       </tbody>
     </table>
   </div>
 
   <div class="pagination" id="pagination" hidden>
-    <button class="btn" id="btn-prev" disabled>← 이전</button>
+    <button class="btn" id="btn-prev" disabled>← Previous</button>
     <span class="page-info" id="page-info"></span>
-    <button class="btn" id="btn-next" disabled>다음 →</button>
+    <button class="btn" id="btn-next" disabled>Next →</button>
   </div>
 
 </div>
@@ -346,7 +346,7 @@
     state.token = tokenInput.value.trim();
     state.page = 1;
     sessionStorage.setItem(SS_KEY, state.token);
-    if (state.token) loadLogs(); else renderEmpty('Token을 입력하면 로그를 불러옵니다.');
+    if (state.token) loadLogs(); else renderEmpty('Enter token to load logs.');
   });
 
   let searchTimer;
@@ -375,9 +375,9 @@
       });
 
       if (res.status === 401) {
-        authStatus.textContent = '인증 실패';
+        authStatus.textContent = 'Authentication failed';
         authStatus.className = 'auth-status err';
-        renderEmpty('Token이 올바르지 않습니다.');
+        renderEmpty('Invalid token.');
         return;
       }
 
@@ -387,18 +387,18 @@
       state.total = data.total;
       state.pages = data.pages;
 
-      authStatus.textContent = '인증됨';
+      authStatus.textContent = 'Authenticated';
       authStatus.className = 'auth-status ok';
 
       renderLogs(data.logs);
       renderPagination();
     } catch (err) {
-      renderEmpty(`오류: ${err.message}`);
+      renderEmpty(`Error: ${err.message}`);
     }
   }
 
   function renderLoading() {
-    logBody.innerHTML = `<tr class="state-row"><td colspan="4"><span class="spinner"></span>불러오는 중...</td></tr>`;
+    logBody.innerHTML = `<tr class="state-row"><td colspan="4"><span class="spinner"></span>Loading...</td></tr>`;
     pagination.hidden = true;
     metaInfo.innerHTML = '';
   }
@@ -411,12 +411,12 @@
 
   function renderLogs(logs) {
     if (!logs.length) {
-      renderEmpty(state.q ? `"${state.q}"에 해당하는 질문이 없습니다.` : '아직 로그가 없습니다.');
-      metaInfo.innerHTML = `총 <strong>0</strong>건`;
+      renderEmpty(state.q ? `No questions matching "${state.q}"` : 'No logs yet.');
+      metaInfo.innerHTML = `Total <strong>0</strong> records`;
       return;
     }
 
-    metaInfo.innerHTML = `총 <strong>${state.total.toLocaleString()}</strong>건`;
+    metaInfo.innerHTML = `Total <strong>${state.total.toLocaleString()}</strong> records`;
 
     logBody.innerHTML = '';
     logs.forEach((log) => {
@@ -442,7 +442,7 @@
       // Question
       const qSec = document.createElement('div');
       qSec.className = 'expand-section';
-      qSec.innerHTML = `<h4>질문</h4>`;
+      qSec.innerHTML = `<h4>Question</h4>`;
       const qP = document.createElement('p');
       qP.textContent = log.question;
       qSec.append(qP);
@@ -451,7 +451,7 @@
       // Answer — markdown rendered
       const aSec = document.createElement('div');
       aSec.className = 'expand-section';
-      aSec.innerHTML = `<h4>답변</h4>`;
+      aSec.innerHTML = `<h4>Answer</h4>`;
       const aDiv = document.createElement('div');
       aDiv.className = 'full-answer';
       aDiv.append(...parseMarkdown(log.answer));

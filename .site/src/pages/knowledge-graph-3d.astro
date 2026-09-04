@@ -7,7 +7,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>3D Knowledge Graph - AI Data Center Systems</title>
-    <link rel="icon" href="/favicon.svg" />
+    <link rel="icon" href={`${import.meta.env.BASE_URL}favicon.svg`} />
     <meta
       name="description"
       content="Interactive 3D knowledge graph for AI Data Center Systems."
@@ -376,7 +376,7 @@
   <body>
     <main class="graph3d">
       <header class="topbar">
-        <a class="brand" href="/" aria-label="Back to AI Data Center Systems">
+        <a class="brand" href={`${import.meta.env.BASE_URL}`} aria-label="Back to AI Data Center Systems">
           <span>AI Data Center Systems</span>
           <h1>Full Knowledge Graph 3D</h1>
         </a>
@@ -1191,14 +1191,14 @@
           .map((item) => `<span>${escapeHtml(item)}</span>`)
           .join('');
         if (node.kind === 'doc' && node.route) {
-          openLink.href = node.route;
+          openLink.href = toSiteUrl(node.route);
           openLink.dataset.visible = 'true';
         } else {
           openLink.dataset.visible = 'false';
         }
         neighbors.innerHTML = related
           .map((neighbor) => {
-            const href = neighbor.route || '#';
+            const href = neighbor.route ? toSiteUrl(neighbor.route) : '#';
             return `<a href="${escapeHtml(href)}">${escapeHtml(shortTitle(neighbor.title))}</a>`;
           })
           .join('');
@@ -1367,6 +1367,10 @@
       function showStatus(title, message) {
         status.hidden = false;
         status.innerHTML = `<div class="status-box"><strong>${escapeHtml(title)}</strong><span>${escapeHtml(message)}</span></div>`;
+      }
+
+      function toSiteUrl(route) {
+        return `${import.meta.env.BASE_URL}${String(route).replace(/^\//, '')}`;
       }
 
       function escapeHtml(value) {

@@ -238,8 +238,10 @@
     return route === '//' ? '/' : route.toLowerCase();
   }
 
+  const baseUrl = import.meta.env.BASE_URL;
+
   function pageGraphUrl(route: string) {
-    return `/kb/pages/${routeGraphKey(route)}.json`;
+    return `${baseUrl}kb/pages/${routeGraphKey(route)}.json`;
   }
 
   async function fetchFirstAvailable(urls: string[]) {
@@ -258,7 +260,7 @@
   }
 
   function globalGraphUrls() {
-    const staticUrl = '/kb/dcs-kb-graph.json';
+    const staticUrl = `${baseUrl}kb/dcs-kb-graph.json`;
     if (window.location.hostname !== 'adcs.restack.tech') return [staticUrl];
     return ['/api/kb/graph', staticUrl];
   }
@@ -490,8 +492,8 @@
     seedGlobalPositions(nodes, width, height, groups);
 
     const threeDHref = currentNode
-      ? `/knowledge-graph-3d/?focus=${encodeURIComponent(currentNode.route ?? currentNode.id)}`
-      : '/knowledge-graph-3d/';
+      ? `${baseUrl}knowledge-graph-3d/?focus=${encodeURIComponent(currentNode.route ?? currentNode.id)}`
+      : `${baseUrl}knowledge-graph-3d/`;
 
     container.innerHTML = `
       <div class="kb-graph-global-shell">

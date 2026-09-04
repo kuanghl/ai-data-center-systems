@@ -1,4 +1,4 @@
 User-agent: *
 Allow: /
 
-Sitemap: https://adcs.restack.tech/sitemap-index.xml
+Sitemap: https://kuanghl.github.io/ai-data-center-systems/sitemap-index.xml

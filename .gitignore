@@ -29,3 +29,5 @@ network/ib-packets
 .site/public/fabric.svg
 .site/public/llms.txt
 .site/public/llms-full.txt
+artifact/
+ai-data-center-systems-main/

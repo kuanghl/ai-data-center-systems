@@ -87,7 +87,7 @@ if (sitemapFiles.length === 0) {
     await Promise.all(sitemapFiles.map((name) => readFile(path.join(distRoot, name), 'utf8')))
   ).join('\n');
   for (const route of canonicalRoutes) {
-    const url = `https://adcs.restack.tech${route}`;
+    const url = `https://kuanghl.github.io/ai-data-center-systems${route}`;
     if (!sitemap.includes(`<loc>${url}</loc>`)) {
       errors.push(`Sitemap is missing canonical URL ${url}.`);
     }
@@ -98,8 +98,8 @@ if (sitemapFiles.length === 0) {
 const llms = await readText(path.join(distRoot, 'llms.txt'));
 assertNoLegacyRoutes(llms, 'llms.txt');
 for (const route of canonicalRoutes.filter((route) => route !== '/')) {
-  if (!llms.includes(`https://adcs.restack.tech${route}`)) {
-    errors.push(`llms.txt is missing canonical URL https://adcs.restack.tech${route}.`);
+  if (!llms.includes(`https://kuanghl.github.io/ai-data-center-systems${route}`)) {
+    errors.push(`llms.txt is missing canonical URL https://kuanghl.github.io/ai-data-center-systems${route}.`);
   }
 }
 
@@ -122,7 +122,7 @@ if (graphText) {
 for (const route of canonicalRoutes.filter((route) => route !== '/')) {
   const htmlPath = path.join(distRoot, route.slice(1), 'index.html');
   const html = await readText(htmlPath);
-  if (html && !html.includes(`<link rel="canonical" href="https://adcs.restack.tech${route}"`)) {
+  if (html && !html.includes(`<link rel="canonical" href="https://kuanghl.github.io/ai-data-center-systems${route}"`)) {
     errors.push(`Canonical tag is missing or incorrect for ${route}.`);
   }
 }
@@ -213,7 +213,7 @@ async function readText(filePath) {
 
 function assertNoLegacyRoutes(text, label) {
   for (const prefix of legacyPrefixes) {
-    if (text.includes(`https://adcs.restack.tech${prefix}`)) {
+    if (text.includes(`https://kuanghl.github.io/ai-data-center-systems${prefix}`)) {
       errors.push(`${label} still contains legacy URL prefix ${prefix}.`);
     }
   }

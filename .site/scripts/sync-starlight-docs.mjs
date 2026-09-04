@@ -12,7 +12,8 @@ const docsOut = path.join(projectRoot, 'src', 'content', 'docs');
 const pagesOut = path.join(projectRoot, 'src', 'pages');
 const publicOut = path.join(projectRoot, 'public');
 const conceptsPath = path.join(projectRoot, 'kb', 'concepts.json');
-const siteUrl = 'https://adcs.restack.tech';
+const siteUrl = 'https://kuanghl.github.io/ai-data-center-systems';
+const basePath = new URL(siteUrl).pathname;
 const ogImageRevision = '2';
 const repositoryEditBase = 'https://github.com/kuanghl/ai-data-center-systems/edit/main/';
 
@@ -380,6 +381,7 @@ function ogImageSlugFromRoute(route) {
 }
 
 function siteHomeBody() {
+  const base = `${new URL(siteUrl).pathname}/`;
   return String.raw`
 <section class="adcs-home-hero">
   <div class="adcs-home-hero-copy">
@@ -443,7 +445,9 @@ function siteHomeBody() {
   <a href="/network/rdma-examples/">RDMA Read/Write Examples</a>
   <a href="/talks/sr-iov-with-dgx-b200/">Making DGX B200 RDMA-ready</a>
 </section>
-`;
+`
+    .replaceAll('href="/', `href="${base}`)
+    .replaceAll('src="/', `src="${base}`);
 }
 
 async function publishBundleFile(absolute, relative, fileName) {
@@ -643,7 +647,7 @@ function isMarkdownHref(href) {
 }
 
 function publicHref(href, sourceRelative) {
-  return `/${resolveSourceHref(href, sourceRelative)}`;
+  return `${basePath}/${resolveSourceHref(href, sourceRelative)}`;
 }
 
 function resolveSourceHref(href, sourceRelative) {
@@ -652,7 +656,7 @@ function resolveSourceHref(href, sourceRelative) {
 }
 
 function routeFromSourceMarkdownHref(href, sourceRelative) {
-  return routeFromOutput(markdownOutputPath(resolveSourceHref(href, sourceRelative)));
+  return `${basePath}${routeFromOutput(markdownOutputPath(resolveSourceHref(href, sourceRelative)))}`;
 }
 
 function titleCase(value) {
