@@ -1,30 +1,33 @@
-name: Deploy GitHub Pages
+# Standard VitePress GitHub Pages workflow:
+# build the site and hand the dist/ directory to the Pages service via
+# actions/upload-pages-artifact + actions/deploy-pages.
+#
+# One-time repo setup: Settings -> Pages -> Source = "GitHub Actions".
+name: Deploy VitePress site to GitHub Pages
 
 on:
   push:
-    branches:
-      - master
-  pull_request:
+    branches: [master]
   workflow_dispatch:
 
 permissions:
-  contents: write
+  contents: read
+  pages: write
+  id-token: write
 
 concurrency:
-  group: pages
+  group: "pages"
   cancel-in-progress: false
 
 jobs:
-  deploy:
+  build:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
-        uses: actions/checkout@v7
-        with:
-          fetch-depth: 0
+        uses: actions/checkout@v4
 
       - name: Setup Node
-        uses: actions/setup-node@v7
+        uses: actions/setup-node@v4
         with:
           node-version: 24
           cache: npm
@@ -35,16 +38,18 @@ jobs:
       - name: Build site
         run: npm run build
 
-      - name: Publish to gh-pages
-        if: github.event_name != 'pull_request'
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: |
-          touch .vitepress/dist/.nojekyll
-          cd .vitepress/dist
-          git init
-          git config user.name "github-actions[bot]"
-          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add -A
-          git commit -m "deploy: update pages site"
-          git push --force "https://x-access-token:${GITHUB_TOKEN}@github.com/${GITHUB_REPOSITORY}.git" HEAD:gh-pages
+      - name: Upload Pages artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: .vitepress/dist
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4

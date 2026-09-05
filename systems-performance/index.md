@@ -1,9 +1,9 @@
 # AI Systems Performance Engineering
 
-- [Chapter 1: Introduction and AI System Overview](./chap01/
-- [Chapter 2: AI System Hardware Overview](./chap02/
-- [Chapter 3: OS, Docker, and Kubernetes Tuning for GPU-Based Environments](./chap03/
-- [Chapter 4: Tuning Distributed Networking Communication](./chap04/
+- [Chapter 1: Introduction and AI System Overview](./chap01/)
+- [Chapter 2: AI System Hardware Overview](./chap02/)
+- [Chapter 3: OS, Docker, and Kubernetes Tuning for GPU-Based Environments](./chap03/)
+- [Chapter 4: Tuning Distributed Networking Communication](./chap04/)
 
 ## Resources
 
@@ -15,7 +15,7 @@
 ### Articles
 
 - [Making Deep Learning Go Brrrr From First Principles](https://horace.io/brrr_intro.html)
-- [Hardware Architectures for LLM Inference](../inference/efficient-llm-inference-systems/appendix/hardware-architectures/
+- [Hardware Architectures for LLM Inference](../inference/efficient-llm-inference-systems/appendix/hardware-architectures/)
 - [Never Underestimate Memory Architecture](./articles/never-underestimate-memory-architecture.ko.md): NUMA, cloud VM topology, Kubernetes CPU Manager, uncore bottlenecks
 - [Keeping GPU Workloads NUMA-Local in Kubernetes](./articles/keeping-gpu-workloads-numa-local-in-kubernetes.ko.md): GPU-local CPU placement, kubelet topology policies, NUMA-aware scheduling
 

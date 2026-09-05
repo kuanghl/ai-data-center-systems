@@ -42,9 +42,9 @@ This article develops a practical answer.
 
 ### Related foundations
 
-- [Transformer inference and the KV cache](../efficient-llm-inference-systems/week03/
-- [Speculative decoding](../efficient-llm-inference-systems/week05/
-- [Inference model architecture profiles](../models/
+- [Transformer inference and the KV cache](../efficient-llm-inference-systems/week03/)
+- [Speculative decoding](../efficient-llm-inference-systems/week05/)
+- [Inference model architecture profiles](../models/)
 
 ---
 

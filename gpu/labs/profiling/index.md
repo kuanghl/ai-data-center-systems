@@ -2,8 +2,8 @@
 
 Nsight Compute and related GPU performance-analysis references. This is the
 hands-on tool you run *while* learning: for every concept in
-[PMPP](../../pmpp/ and every kernel in
-[`../kernels`](../kernels/, confirm the behavior with real metrics
+[PMPP](../../pmpp/) and every kernel in
+[`../kernels`](../kernels/), confirm the behavior with real metrics
 here.
 
 ## Primary Resource

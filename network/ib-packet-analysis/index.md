@@ -1,7 +1,5 @@
 # InfiniBand Packet Analysis: A Practical RDMA Transport Primer
 
-**English** | [English edition](README_KO.md)
-
 [![NVIDIA](https://img.shields.io/badge/NVIDIA-Networking-76B900?logo=nvidia&logoColor=white)](https://www.nvidia.com/en-us/networking/)
 [![RDMA](https://img.shields.io/badge/RDMA-Zero--Copy-0078D4)](https://docs.nvidia.com/networking/display/rdmaawareprogrammingv17)
 [![TShark](https://img.shields.io/badge/TShark-CLI%20Analysis-1679A7?logo=wireshark&logoColor=white)](https://www.wireshark.org/docs/man-pages/tshark.html)

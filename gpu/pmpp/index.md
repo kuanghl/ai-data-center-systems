@@ -3,7 +3,7 @@
 The **primary spine** of this GPU track: the CUDA and parallel-programming
 foundation based on *Programming Massively Parallel Processors*. Everything else
 supports this course — pair it with
-[Heterogeneous Systems](../heterogeneous-systems/ for a second pass,
+[Heterogeneous Systems](../heterogeneous-systems/) for a second pass,
 look up details in [`appendix/`](../appendix/), and practice each concept in
 [`labs/`](../labs/).
 
@@ -15,10 +15,10 @@ look up details in [`appendix/`](../appendix/), and practice each concept in
 
 | Lecture | Topic | Notes |
 | ------- | ----- | ----- |
-| 2 | Data parallel programming and the CUDA programming model | [lec02](lec02/ |
-| 3 | Multidimensional grids and data | [lec03](lec03/ |
-| 4 | GPU architecture | [lec04](lec04/ |
-| 5 | Memory architecture and tiling | [lec05](lec05/ |
+| 2 | Data parallel programming and the CUDA programming model | [lec02](lec02/) |
+| 3 | Multidimensional grids and data | [lec03](lec03/) |
+| 4 | GPU architecture | [lec04](lec04/) |
+| 5 | Memory architecture and tiling | [lec05](lec05/) |
 
 ## Study Priority
 

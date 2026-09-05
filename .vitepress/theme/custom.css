@@ -1,15 +1,29 @@
-.lang-switch {
+/* translate.js language dropdown, rendered into the #langSelect container
+   in the VitePress nav bar by static/translate-init.js */
+.lang-select {
+  display: flex;
+  align-items: center;
   margin-left: 0.8rem;
-  padding: 0.3rem 0.65rem;
+}
+
+#langSelectSelectLanguage {
+  padding: 0.3rem 0.5rem;
   border: 1px solid var(--vp-c-divider);
   border-radius: 0.4rem;
-  background: transparent;
+  background: var(--vp-bg);
   color: var(--vp-c-text-1);
   font-size: 0.85rem;
   cursor: pointer;
 }
 
-.lang-switch:hover {
+#langSelectSelectLanguage:hover {
   border-color: var(--vp-c-brand-1);
-  color: var(--vp-c-brand-1);
+}
+
+/* KaTeX display math (markdown-it-katex emits <p><span class="katex-display">):
+   own line, horizontally scrollable when wide */
+.vp-doc .katex-display {
+  margin: 1.2em 0;
+  overflow-x: auto;
+  overflow-y: hidden;
 }

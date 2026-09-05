@@ -693,7 +693,7 @@ Distributed examples:
 - BGP-DPF
 - IS-IS FlexAlgo
 
-For the GLB-specific use of BGP NNHN and forwarding-plane heartbeats, see [Appendix: BGP-based Underlay and GLB NNHN](../glb-nnhn-bgp-underlay/.
+For the GLB-specific use of BGP NNHN and forwarding-plane heartbeats, see [Appendix: BGP-based Underlay and GLB NNHN](../glb-nnhn-bgp-underlay/).
 
 Controller-driven examples:
 

@@ -285,16 +285,16 @@ The chapter notes that liquid cooling can significantly reduce data center power
 
 Liquid cooling is not a single design. The chapter discusses four main approaches:
 
-- Immersion liquid cooling (침지식 액체 냉각)
-- Cold plate liquid cooling (콜드 플레이트 액체 냉각)
-- Rear-door heat exchanger liquid cooling (후면 도어 열교환기 액체 냉각)
-- Sprayed liquid cooling (분사식 액체 냉각)
+- Immersion liquid cooling
+- Cold plate liquid cooling
+- Rear-door heat exchanger liquid cooling
+- Sprayed liquid cooling
 
 ![Summary of data center liquid cooling methods](assets/liquid-cooling-methods-summary.svg)
 
 This simplified original diagram summarizes the same cooling categories discussed in the chapter. It is not a reproduction of the published figure from Wu et al.; the paper is listed in References only as a technical background source.
 
-### Immersion Liquid Cooling (침지식 액체 냉각)
+### Immersion Liquid Cooling
 
 In immersion cooling, equipment is submerged in a dielectric coolant. The fluid absorbs heat from boards and components directly.
 
@@ -319,7 +319,7 @@ Limitations:
 - Hardware must be immersion-compatible.
 - Less compatible with standard rack service workflows.
 
-### Single-Phase Immersion Cooling (단상 침지 냉각)
+### Single-Phase Immersion Cooling
 
 In single-phase immersion cooling, the coolant remains liquid.
 
@@ -351,7 +351,7 @@ flowchart LR
 
 Single-phase immersion is conceptually simple, but it requires immersion-ready infrastructure and equipment.
 
-### Two-Phase Immersion Cooling (2상 침지 냉각)
+### Two-Phase Immersion Cooling
 
 In two-phase immersion cooling, the fluid has a boiling point below the temperature of hot components.
 
@@ -381,9 +381,9 @@ flowchart TB
 
 Two-phase immersion can avoid a separate external heat exchanger inside the coolant loop because phase change happens inside the tank. It is efficient, but it requires carefully selected fluids and specialized operational procedures.
 
-### Cold Plate Liquid Cooling (콜드 플레이트 냉각)
+### Cold Plate Liquid Cooling
 
-Cold plate cooling is also called direct-to-chip liquid cooling (직접 칩 냉각).
+Cold plate cooling is also called direct-to-chip liquid cooling.
 
 In this design:
 
@@ -423,7 +423,7 @@ Limitations:
 - Not all components are cooled directly.
 - Still requires facility water or heat exchange infrastructure.
 
-### Rear-Door Heat Exchanger Liquid Cooling (후면 도어 열교환기 액체 냉각)
+### Rear-Door Heat Exchanger Liquid Cooling
 
 Rear-door heat exchanger cooling uses a radiator-like door at the back of the rack. Hot exhaust air from the equipment passes through the rear-door heat exchanger. A chilled-water loop absorbs heat from the air.
 
@@ -460,7 +460,7 @@ flowchart LR
 
 The chapter also refers to this approach as air-assisted liquid cooling. The equipment remains air cooled, but liquid removes heat at the rack rear.
 
-### Sprayed Liquid Cooling (분사식 액체 냉각)
+### Sprayed Liquid Cooling
 
 Sprayed liquid cooling sprays coolant through nozzles onto heat-generating components.
 
@@ -637,7 +637,7 @@ Bidirectional fans add flexibility because the same platform can support either 
 
 ### 4. How does immersion cooling work?
 
-Immersion cooling places equipment directly in a dielectric coolant. The coolant absorbs heat from the electronics and transfers it to a heat exchanger or condenser. In single-phase immersion, the coolant stays liquid. In two-phase, or 2상, immersion, the coolant boils into vapor and then condenses back into liquid.
+Immersion cooling places equipment directly in a dielectric coolant. The coolant absorbs heat from the electronics and transfers it to a heat exchanger or condenser. In single-phase immersion, the coolant stays liquid. In two-phase immersion, the coolant boils into vapor and then condenses back into liquid.
 
 The main advantage is heat removal. Immersion cooling can support very high power density and can reduce reliance on high-speed fans. It can also improve facility efficiency when the full cooling loop is designed well.
 

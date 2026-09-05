@@ -1,29 +1,15 @@
 <script setup lang="ts">
-import { ref } from 'vue';
 import DefaultTheme from 'vitepress/theme';
 
 const { Layout } = DefaultTheme;
-const translated = ref(false);
-
-function toggleLanguage() {
-  const t = (window as any).translate;
-  if (!t) return;
-  if (translated.value) {
-    t.revert();
-    translated.value = false;
-  } else {
-    t.execute('zh-CN');
-    translated.value = true;
-  }
-}
 </script>
 
 <template>
   <Layout>
-    <template #nav-bar-content>
-      <button type="button" class="lang-switch" @click="toggleLanguage">
-        {{ translated ? 'English' : '简体中文' }}
-      </button>
+    <!-- translate-init.js renders the translate.js language select into this
+         container (via selectLanguageTag.documentId) once the app is mounted. -->
+    <template #nav-bar-content-after>
+      <div id="langSelect" class="lang-select" />
     </template>
   </Layout>
 </template>

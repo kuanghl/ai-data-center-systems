@@ -1,8 +1,8 @@
 # GPU Architecture (reference)
 
 Look-up material for the GPU execution model and NVIDIA hardware architecture.
-Use this to check *how the hardware behaves*; use [`../cuda`](../cuda/
-for the CUDA programming API and [`../../pmpp`](../../pmpp/
+Use this to check *how the hardware behaves*; use [`../cuda`](../cuda/)
+for the CUDA programming API and [`../../pmpp`](../../pmpp/)
 to actually learn the model.
 
 ## Execution model
@@ -19,7 +19,7 @@ The concepts behind every CUDA kernel:
 
 Video primer: [Fundamentals of GPU Architecture](https://www.youtube.com/playlist?list=PLxNPSjHT5qvscDTMaIAY9boOOXAJAS7y4)
 — a short refresher; the same ground is covered in depth by
-[PMPP](../../pmpp/.
+[PMPP](../../pmpp/).
 
 ## NVIDIA architecture references
 

@@ -2,9 +2,9 @@
 
 Official NVIDIA CUDA programming documentation. This is a **lookup** resource
 for API and language details — not a course. Learn CUDA through
-[PMPP](../../pmpp/; write and analyze kernels in
-[`labs/kernels`](../../labs/kernels/; check hardware behavior
-in [`../architecture`](../architecture/.
+[PMPP](../../pmpp/); write and analyze kernels in
+[`labs/kernels`](../../labs/kernels/); check hardware behavior
+in [`../architecture`](../architecture/).
 
 ## Core references
 

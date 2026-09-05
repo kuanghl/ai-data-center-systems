@@ -2,25 +2,25 @@
 
 ## Table of Contents
 
-- [Chapter 01: Wonders in the Workload](./chap01/
-- [Chapter 02: ‘The Common-Man View’ of AI Data Center Fabrics](./chap02/
-- [Chapter 03: Network Design Considerations](./chap03/
-- [Chapter 04: Optics and Cable Management](./chap04/
-- [Chapter 05: Thermal and Power Efficiency Considerations](./chap05/
-- [Chapter 06: Effective Load Balancing](./chap06/
-- [Chapter 07: RoCEv2 Transport and Congestion Management](./chap07/
-- [Chapter 08: IP Routing for AI/ML Fabrics](./chap08/
-- [Chapter 09: Storage Network Design and Technologies for AI Data Centers](./chap09/
-- [Chapter 10: AI Network Performance KPIs](./chap10/
-- [Chapter 11: Monitoring and Telemetry](./chap11/
-- [Chapter 12: Ultra Ethernet Consortium, UEC](./chap12/
+- [Chapter 01: Wonders in the Workload](./chap01/)
+- [Chapter 02: ‘The Common-Man View’ of AI Data Center Fabrics](./chap02/)
+- [Chapter 03: Network Design Considerations](./chap03/)
+- [Chapter 04: Optics and Cable Management](./chap04/)
+- [Chapter 05: Thermal and Power Efficiency Considerations](./chap05/)
+- [Chapter 06: Effective Load Balancing](./chap06/)
+- [Chapter 07: RoCEv2 Transport and Congestion Management](./chap07/)
+- [Chapter 08: IP Routing for AI/ML Fabrics](./chap08/)
+- [Chapter 09: Storage Network Design and Technologies for AI Data Centers](./chap09/)
+- [Chapter 10: AI Network Performance KPIs](./chap10/)
+- [Chapter 11: Monitoring and Telemetry](./chap11/)
+- [Chapter 12: Ultra Ethernet Consortium, UEC](./chap12/)
 
 ## Appendix
 
-- [InfiniBand Packet Analysis](./ib-packet-analysis/
-- [RDMA Read/Write examples](./rdma-examples/
-- [GPU Cluster Failure Analysis: ECC, Xid, RDMA, and NCCL Hang](./gpu-cluster-failure-analysis/
-- [Clos Fabric Lab Series](./clos-ebgp-lab/
+- [InfiniBand Packet Analysis](./ib-packet-analysis/)
+- [RDMA Read/Write examples](./rdma-examples/)
+- [GPU Cluster Failure Analysis: ECC, Xid, RDMA, and NCCL Hang](./gpu-cluster-failure-analysis/)
+- [Clos Fabric Lab Series](./clos-ebgp-lab/)
 
 ## Resources
 

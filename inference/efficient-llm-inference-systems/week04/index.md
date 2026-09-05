@@ -23,7 +23,7 @@ You should already know:
 
 This week explains the direct motivation behind those two measurements. **If we reduce weight bytes, exactly what becomes faster, and how do we preserve quality?**
 
-Related reading: [Hardware Architectures for LLM Inference](../appendix/hardware-architectures/ connects quantization to memory movement, scratchpads, GPU/TPU execution models, and scale-out communication.
+Related reading: [Hardware Architectures for LLM Inference](../appendix/hardware-architectures/) connects quantization to memory movement, scratchpads, GPU/TPU execution models, and scale-out communication.
 
 ---
 

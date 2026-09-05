@@ -556,7 +556,7 @@ The division of labor is important:
 | GLB heartbeat | How healthy is that path right now? | Spine A to Leaf B is congested |
 | GLB decision | Which path should this flow or flowlet use? | Prefer Spine C for traffic to Leaf B |
 
-For more detail on the BGP underlay assumptions, NNHN signaling, and GLB operational roles, see [Appendix: BGP-based Underlay and GLB NNHN](../glb-nnhn-bgp-underlay/.
+For more detail on the BGP underlay assumptions, NNHN signaling, and GLB operational roles, see [Appendix: BGP-based Underlay and GLB NNHN](../glb-nnhn-bgp-underlay/).
 
 ```mermaid
 %%{init: {"theme": "base", "themeVariables": {"background": "#171717", "primaryColor": "#232323", "primaryTextColor": "#f5f5f5", "primaryBorderColor": "#d0d0d0", "lineColor": "#cfcfcf", "fontFamily": "Inter, Arial, sans-serif"}}}%%

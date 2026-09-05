@@ -1,29 +1,29 @@
 # Keeping GPU Workloads NUMA-Local in Kubernetes
 
-> Ronak Nathani, "Keeping GPU Workloads NUMA-Local in Kubernetes" 요약 노트.
-> 원문: <https://ronaknathani.com/blog/2026/05/keeping-gpu-workloads-numa-local-in-kubernetes/>
+> Summary notes for Ronak Nathani, "Keeping GPU Workloads NUMA-Local in Kubernetes".
+> Original: <https://ronaknathani.com/blog/2026/05/keeping-gpu-workloads-numa-local-in-kubernetes/>
 
-## 한 줄 요지
+## One-Line Summary
 
-GPU workload에서 CPU가 request preparation, batching, dataloader, pinned memory staging처럼 GPU로 가는 data path에 있다면, Kubernetes의 기본 resource scheduling만으로는 부족하다. CPU, GPU, memory가 같은 NUMA domain에 들어오도록 kubelet policy, topology-aware scheduling, workload sizing을 함께 설계해야 한다.
+If the CPU sits on the data path to the GPU in a GPU workload — request preparation, batching, dataloader, pinned memory staging — then Kubernetes' default resource scheduling is not enough. Kubelet policy, topology-aware scheduling, and workload sizing must be designed together so that CPU, GPU, and memory land in the same NUMA domain.
 
-## 이 글의 위치
+## Where This Article Sits
 
-이 글은 NUMA architecture의 이론 설명보다는 Kubernetes에서 NUMA locality를 실제로 지키는 운영 방법에 초점을 둔다. 핵심 질문은 다음이다.
+This article focuses less on the theory of NUMA architecture and more on operational methods for actually enforcing NUMA locality in Kubernetes. The core questions are the following.
 
-- GPU와 CPU가 같은 NUMA node에 있는가?
-- CPU request가 exclusive CPU allocation을 받을 수 있는 형태인가?
-- GPU device plugin이 NUMA topology hint를 제공하는가?
-- Pod가 한 NUMA node에 들어가지 않을 때 조용히 느려지는가, admission 단계에서 실패하는가?
-- Scheduler가 node aggregate resource가 아니라 NUMA node별 남은 resource를 보고 배치하는가?
+- Are the GPU and CPU on the same NUMA node?
+- Is the CPU request in a form that can receive exclusive CPU allocation?
+- Does the GPU device plugin provide NUMA topology hints?
+- When a pod does not fit in one NUMA node, does it quietly get slower, or does it fail at admission?
+- Does the scheduler place pods by looking at per-NUMA-node remaining resources rather than node aggregate resources?
 
-이 질문은 inference와 training 모두에 걸린다. Inference에서는 p99 tail latency로, training에서는 dataloader wait time, H2D copy time, step time variance로 나타난다.
+These questions apply to both inference and training. In inference they show up as p99 tail latency; in training as dataloader wait time, H2D copy time, and step time variance.
 
-## NUMA와 GPU data path
+## NUMA and the GPU Data Path
 
-NUMA는 CPU core가 어느 memory에 접근하느냐에 따라 access latency와 bandwidth가 달라지는 구조다. 2-socket server에서는 socket마다 local memory가 있고, 다른 socket의 memory에 접근하려면 socket interconnect를 건너야 한다. AMD EPYC에서는 BIOS의 NPS(Nodes Per Socket) 설정에 따라 한 socket이 여러 NUMA node로 더 쪼개질 수 있다.
+NUMA is a structure where access latency and bandwidth vary depending on which memory a CPU core accesses. In a 2-socket server each socket has local memory, and accessing the other socket's memory requires crossing the socket interconnect. On AMD EPYC, a single socket can be further split into multiple NUMA nodes depending on the BIOS NPS (Nodes Per Socket) setting.
 
-GPU workload에서 중요한 점은 PCIe device도 특정 CPU socket 또는 root complex에 물리적으로 연결된다는 것이다. GPU가 DMA로 host memory를 읽을 때 그 memory가 GPU와 가까운 NUMA node에 있으면 local path에 가깝지만, 다른 socket의 memory에 있으면 interconnect를 건너게 된다.
+What matters for GPU workloads is that PCIe devices are also physically attached to a specific CPU socket or root complex. When a GPU reads host memory via DMA, the path is close to local if that memory is on a NUMA node near the GPU, but it crosses the interconnect if it is on another socket's memory.
 
 ```text
 Good path:
@@ -39,20 +39,20 @@ H2D / DMA crosses socket interconnect
 
 ![NUMA-local and cross-socket GPU data paths](assets/gpu-numa-locality.svg)
 
-원문은 한 inference workload에서 CPU가 두 socket에 걸친 pod가 같은 socket 안에 머문 pod보다 load 상태의 p99 tail latency가 30% 이상 높았다고 설명한다. Kubernetes는 이 상황을 자동으로 드러내지 않는다. Pod는 Running이고 health check도 통과하지만, 같은 traffic을 더 느리게 처리한다.
+The original describes an inference workload where pods whose CPU spanned two sockets had 30%+ higher p99 tail latency under load than pods that stayed within a single socket. Kubernetes does not surface this automatically. The pod is Running and passes health checks, but it processes the same traffic more slowly.
 
-Training도 같은 원리를 가진다. Data loader worker가 CPU에서 batch를 만들고 GPU로 넘기는 동안 remote memory access와 inter-socket bandwidth contention이 생기면 GPU feeding cadence가 흔들린다. PyTorch performance tuning guide도 training process를 단일 NUMA node에 bind하는 것을 권장한다.
+Training has the same principle. If remote memory access and inter-socket bandwidth contention occur while data loader workers build batches on the CPU and hand them to the GPU, the GPU feeding cadence becomes unstable. The PyTorch performance tuning guide also recommends binding the training process to a single NUMA node.
 
-## Kubernetes CPU isolation level
+## Kubernetes CPU Isolation Levels
 
-원문은 Kubernetes에서 CPU isolation과 NUMA alignment가 단계적으로 강해진다고 설명한다. 각 단계는 더 강한 성능 isolation을 제공하지만 workload sizing 제약과 failure mode도 늘어난다.
+The original describes CPU isolation and NUMA alignment in Kubernetes as strengthening in stages. Each stage provides stronger performance isolation but also adds workload sizing constraints and failure modes.
 
 | Level | Setting | What it gives | Main requirement |
 | --- | --- | --- | --- |
 | 1 | `cpuManagerPolicy: static` | exclusive logical CPU pinning | Guaranteed QoS, integer CPU request |
-| 2 | `cpuManagerPolicyOptions: full-pcpus-only=true` | physical core 단위 allocation | SMT thread 수의 배수 CPU request |
-| 3 | `topologyManagerPolicy: single-numa-node` | CPU/device/hugepage topology hint를 단일 NUMA node에 맞춤 | critical resource가 한 NUMA node에 들어야 함 |
-| 3+ | `memoryManagerPolicy: Static` | memory request도 topology admission에 포함 | `reservedMemory`, NUMA별 memory capacity planning |
+| 2 | `cpuManagerPolicyOptions: full-pcpus-only=true` | allocation at physical core granularity | CPU request that is a multiple of the SMT thread count |
+| 3 | `topologyManagerPolicy: single-numa-node` | align CPU/device/hugepage topology hints to a single NUMA node | critical resources must fit in one NUMA node |
+| 3+ | `memoryManagerPolicy: Static` | memory requests also included in topology admission | `reservedMemory`, per-NUMA memory capacity planning |
 
 ```mermaid
 flowchart LR
@@ -79,72 +79,72 @@ flowchart LR
 
 ## Level 1: `cpuManagerPolicy: static`
 
-Kubernetes 기본값에서는 OS scheduler가 container process를 사용 가능한 CPU 위에서 자유롭게 이동시킨다. 전체 CPU utilization 관점에서는 효율적일 수 있지만, cache affinity와 latency consistency에는 불리하다.
+By Kubernetes default, the OS scheduler freely migrates container processes across the available CPUs. This can be efficient from a total CPU utilization standpoint, but it works against cache affinity and latency consistency.
 
 ```yaml
 cpuManagerPolicy: static
 ```
 
-`static` policy를 켜면 Guaranteed QoS pod의 integer CPU request를 가진 container가 exclusive logical CPU를 받을 수 있다. Kubelet은 container의 cpuset cgroup을 제한해 해당 process가 배정된 CPU list 안에서만 실행되도록 만든다.
+With the `static` policy enabled, containers in Guaranteed QoS pods that have an integer CPU request can receive exclusive logical CPUs. The kubelet restricts the container's cpuset cgroup so that its processes only run within the assigned CPU list.
 
-필요 조건은 다음이다.
+The requirements are the following.
 
 | Requirement | Notes |
 | --- | --- |
-| `requests == limits` | 모든 container가 Guaranteed QoS 조건을 만족해야 함 |
-| integer CPU request | `5.5` 같은 fractional CPU는 exclusive CPU 대상이 아님 |
-| init container와 sidecar 확인 | pod QoS는 main container만으로 결정되지 않음 |
-| OS reserved CPU 별도 고려 | host daemon과 kernel thread가 pinned CPU를 방해하지 않게 해야 함 |
+| `requests == limits` | every container must satisfy the Guaranteed QoS condition |
+| integer CPU request | fractional CPUs like `5.5` are not eligible for exclusive CPUs |
+| check init containers and sidecars | pod QoS is not determined by the main container alone |
+| account for OS reserved CPUs separately | host daemons and kernel threads must not interfere with pinned CPUs |
 
-이 단계만으로도 thread migration이 줄고 container 간 CPU contention이 줄어 성능 일관성이 좋아질 수 있다. 하지만 logical CPU pinning만으로는 physical core 단위 isolation이 보장되지 않는다.
+This stage alone can reduce thread migration and inter-container CPU contention, improving performance consistency. However, logical CPU pinning alone does not guarantee isolation at the physical core level.
 
 ## Level 2: `full-pcpus-only`
 
-SMT가 켜진 system에서는 하나의 physical core가 보통 두 logical core로 보인다. 두 container가 같은 physical core의 sibling hyperthread를 하나씩 받으면 L1/L2 cache와 execution resource를 공유한다.
+On a system with SMT enabled, one physical core usually appears as two logical cores. If two containers each take one sibling hyperthread of the same physical core, they share the L1/L2 cache and execution resources.
 
 ```yaml
 cpuManagerPolicyOptions:
   full-pcpus-only: "true"
 ```
 
-`full-pcpus-only=true`는 logical core 조각이 아니라 physical core 전체를 container에 준다. 즉 한 physical core의 SMT sibling이 같은 container로 간다.
+`full-pcpus-only=true` gives containers whole physical cores rather than fragments of logical cores. In other words, the SMT siblings of a physical core go to the same container.
 
-대가도 있다. Exclusive CPU를 받는 container는 SMT thread 수의 배수만큼 CPU를 request해야 한다. 일반적인 2-way SMT에서는 2, 4, 6처럼 even CPU request가 필요하다. 홀수 CPU request를 가진 pinned container는 `SMTAlignmentError`로 실패할 수 있다.
+There is a price. Containers receiving exclusive CPUs must request CPUs in multiples of the SMT thread count. With common 2-way SMT, an even CPU request such as 2, 4, 6 is needed. A pinned container with an odd CPU request can fail with an `SMTAlignmentError`.
 
-운영적으로는 이 옵션을 켜기 전에 기존 workload의 CPU request를 audit해야 한다.
+Operationally, the CPU requests of existing workloads should be audited before enabling this option.
 
 ## Level 3: `single-numa-node`
 
-`cpuManagerPolicy: static`과 `full-pcpus-only`는 CPU pinning과 physical core isolation을 제공하지만, 모든 CPU가 같은 NUMA node에서 왔는지는 보장하지 않는다. Kubelet CPU Manager의 기본 packed allocation은 가능한 한 NUMA-local하게 배치하려고 하지만, node fragmentation이 생기면 한 container의 CPU가 여러 NUMA node에 걸칠 수 있다.
+`cpuManagerPolicy: static` and `full-pcpus-only` provide CPU pinning and physical core isolation, but they do not guarantee that all CPUs come from the same NUMA node. The kubelet CPU Manager's default packed allocation tries to place CPUs as NUMA-locally as possible, but if node fragmentation occurs, one container's CPUs can span multiple NUMA nodes.
 
 ```yaml
 topologyManagerPolicy: single-numa-node
 ```
 
-Topology Manager는 CPU Manager, Device Manager, Memory Manager 같은 component에서 topology hint를 모아 resource allocation이 같은 NUMA node 안에서 가능한지 확인한다. `single-numa-node`에서는 한 NUMA node가 필요한 hinted resource를 만족하지 못하면 pod admission을 거부한다.
+The Topology Manager collects topology hints from components such as the CPU Manager, Device Manager, and Memory Manager and checks whether the resource allocation can be satisfied within the same NUMA node. Under `single-numa-node`, if no single NUMA node can satisfy the required hinted resources, pod admission is rejected.
 
-중요한 caveat가 있다.
+There are important caveats.
 
 | Caveat | Meaning |
 | --- | --- |
-| GPU plugin topology hint 필요 | NVIDIA device plugin 같은 device plugin이 NUMA `TopologyInfo`를 제공해야 CPU-GPU locality를 강제할 수 있음 |
-| scope 선택 필요 | `container` scope는 container별 alignment, `pod` scope는 pod effective request 전체 alignment |
-| sidecar 주의 | logging/metrics sidecar까지 pod scope에 묶으면 불필요하게 admission이 어려워질 수 있음 |
-| memory는 별도 | memory까지 보장하려면 `memoryManagerPolicy: Static`이 필요 |
+| GPU plugin topology hint required | a device plugin such as the NVIDIA device plugin must provide NUMA `TopologyInfo` for CPU-GPU locality to be enforced |
+| scope selection required | `container` scope aligns per container, `pod` scope aligns the pod's entire effective request |
+| sidecar caution | binding logging/metrics sidecars into the pod scope can make admission unnecessarily harder |
+| memory is separate | guaranteeing memory as well requires `memoryManagerPolicy: Static` |
 
-## Memory Manager까지 켜는 이유
+## Why Enable the Memory Manager Too
 
-CPU와 GPU가 같은 NUMA node에 있어도 host memory allocation이 remote NUMA node에 잡히면 DMA path가 멀어질 수 있다. 따라서 강한 NUMA alignment에는 memory request도 topology admission에 포함해야 한다.
+Even if the CPU and GPU are on the same NUMA node, if host memory allocation lands on a remote NUMA node the DMA path can become longer. So for strong NUMA alignment, memory requests must also be included in topology admission.
 
 ```yaml
 memoryManagerPolicy: Static
 ```
 
-이 설정을 쓰려면 kubelet의 `reservedMemory`도 구성해야 한다. 또한 workload의 memory request가 target NUMA node 안에 들어야 한다. 그렇지 않으면 CPU와 GPU는 맞아도 memory 때문에 admission이 실패하거나, 실제 runtime에서 locality가 깨질 수 있다.
+To use this setting, the kubelet's `reservedMemory` must also be configured. In addition, the workload's memory request must fit inside the target NUMA node. Otherwise, even with the CPU and GPU aligned, admission can fail because of memory, or locality can break at actual runtime.
 
-## 최소 kubelet configuration
+## Minimal Kubelet Configuration
 
-NUMA-aligned GPU node pool을 별도로 운영한다면 원문은 다음 계열의 kubelet 설정을 제시한다.
+If you operate a separate NUMA-aligned GPU node pool, the original presents a kubelet configuration of the following family.
 
 ```yaml
 cpuManagerPolicy: static
@@ -157,42 +157,42 @@ memoryManagerPolicy: Static
 # memoryManagerPolicy: Static requires reservedMemory to be configured.
 ```
 
-CPU Manager나 Memory Manager policy를 바꿀 때는 drained node에서 적용해야 한다. Kubelet restart 전에 CPU/memory manager state file을 지워야 하는 경우도 있다. 운영 중인 mixed workload node에 바로 켜면 기존 pod sizing과 충돌할 수 있다.
+When changing the CPU Manager or Memory Manager policy, apply it on a drained node. In some cases the CPU/memory manager state files must be removed before restarting the kubelet. Enabling it directly on a live mixed-workload node can collide with existing pod sizing.
 
-## Kubelet CPU allocation이 만드는 조용한 성능 저하
+## The Quiet Performance Degradation Kubelet CPU Allocation Creates
 
-`cpuManagerPolicy: static`의 packed allocation은 대체로 좋은 방향이다. Kubelet은 full NUMA node, full physical core, individual logical core 순서로 CPU를 가져오며, 가능한 한 이미 많이 사용된 NUMA node를 먼저 채워 fragmentation을 줄이려 한다.
+The packed allocation of `cpuManagerPolicy: static` is a generally good direction. The kubelet takes CPUs in the order of full NUMA node, full physical core, and individual logical core, and tries to fill the most heavily used NUMA node first to reduce fragmentation.
 
-하지만 "가능하면 local"은 보장이 아니다.
+But "local if possible" is not a guarantee.
 
-예를 들어 2-socket machine이 있고 socket당 48 physical core, SMT 포함 96 vCPU가 있다고 하자. Reservation 이후 각 NUMA node에 90 allocatable vCPU와 4 GPU가 있다고 가정한다. Pod 하나가 GPU 1개와 22 vCPU를 request하면 처음 4개 pod는 NUMA 0에 잘 들어간다.
+For example, suppose there is a 2-socket machine with 48 physical cores per socket, 96 vCPUs including SMT. After reservations, assume each NUMA node has 90 allocatable vCPUs and 4 GPUs. If one pod requests 1 GPU and 22 vCPUs, the first 4 pods fit NUMA 0 nicely.
 
 ```text
 4 pods x 22 vCPU = 88 vCPU
 NUMA 0 remaining = 2 vCPU
 ```
 
-5번째 pod가 22 vCPU를 요청하면 NUMA 0에는 2 vCPU만 남아 있다. `single-numa-node`가 없다면 CPU Manager는 2 vCPU를 NUMA 0에서, 나머지 20 vCPU를 NUMA 1에서 가져올 수 있다. Pod는 정상 실행되지만 CPU가 NUMA boundary를 걸친다.
+When the 5th pod requests 22 vCPUs, only 2 vCPUs remain on NUMA 0. Without `single-numa-node`, the CPU Manager can take 2 vCPUs from NUMA 0 and the remaining 20 vCPUs from NUMA 1. The pod runs normally, but its CPUs span the NUMA boundary.
 
-이것이 가장 위험한 실패 모드다. Pod는 실패하지 않는다. Kubernetes event도 성능 저하를 알려주지 않는다. 사용자는 p99 latency나 throughput variance를 보고 나서야 문제를 발견한다.
+This is the most dangerous failure mode. The pod does not fail. Kubernetes events do not report the performance degradation either. Users discover the problem only after seeing p99 latency or throughput variance.
 
 ## Failure Mode 1: `SMTAlignmentError`
 
-`full-pcpus-only=true`를 켜면 exclusive CPU를 받는 container의 CPU request가 SMT thread 수의 배수가 아니면 kubelet이 pod를 거부한다.
+With `full-pcpus-only=true`, if a container receiving exclusive CPUs has a CPU request that is not a multiple of the SMT thread count, the kubelet rejects the pod.
 
-예를 들어 2-way SMT 환경에서 pinned container가 3 CPU를 request하면 physical core를 온전히 줄 수 없다. 이 경우 `SMTAlignmentError`가 발생한다. Deployment나 StatefulSet controller가 pod를 재생성해도 같은 node pool에서는 같은 이유로 계속 실패한다.
+For example, in a 2-way SMT environment, if a pinned container requests 3 CPUs, a whole physical core cannot be given. In this case an `SMTAlignmentError` occurs. Even if the Deployment or StatefulSet controller recreates the pod, it keeps failing for the same reason on the same node pool.
 
-대응은 단순하지만 사전 준비가 필요하다.
+The response is simple but requires preparation in advance.
 
-- pinned container CPU request를 even number로 조정한다.
-- sidecar와 init container의 request/limit이 pod QoS를 깨지 않는지 확인한다.
-- `full-pcpus-only`를 켜는 node pool을 별도로 만든다.
+- Adjust the pinned container's CPU request to an even number.
+- Check that sidecar and init container request/limits do not break the pod QoS.
+- Create a separate node pool with `full-pcpus-only` enabled.
 
 ## Failure Mode 2: `TopologyAffinityError`
 
-`topologyManagerPolicy: single-numa-node`를 켜면 kubelet은 CPU, device, memory topology hint를 모아 단일 NUMA node에서 만족 가능한지 본다. 불가능하면 pod는 `TopologyAffinityError`로 admission 단계에서 실패한다.
+With `topologyManagerPolicy: single-numa-node`, the kubelet collects CPU, device, and memory topology hints and checks whether they can be satisfied on a single NUMA node. If not, the pod fails at admission with a `TopologyAffinityError`.
 
-이 실패는 처음에는 혼란스럽다. Node 전체 aggregate resource는 충분해 보일 수 있기 때문이다.
+This failure is confusing at first. The node's aggregate resources can look sufficient.
 
 ```text
 Node free CPU = 60 vCPU
@@ -201,13 +201,13 @@ NUMA 1 free = 40 vCPU
 Pod request = 48 vCPU
 ```
 
-총량으로는 60 vCPU가 있어 보이지만, 어떤 단일 NUMA node도 48 vCPU를 제공하지 못한다. `single-numa-node`에서는 이런 pod를 받아들이지 않는 것이 맞다. 조용히 느려지는 것보다 명시적으로 실패하는 편이 latency-sensitive GPU service에는 더 낫다.
+In total it looks like there are 60 vCPUs, but no single NUMA node can provide 48 vCPUs. Under `single-numa-node`, refusing such a pod is correct. For latency-sensitive GPU services, failing explicitly is better than quietly getting slower.
 
-## Topology-aware scheduling이 필요한 이유
+## Why Topology-aware Scheduling Is Needed
 
-기본 Kubernetes scheduler는 node의 aggregate resource를 보고 scheduling한다. NUMA node별 잔여 CPU, memory, GPU locality를 알지 못한다. 따라서 scheduler는 pod를 node에 보냈지만 kubelet이 topology admission에서 거부하는 일이 생긴다.
+The default Kubernetes scheduler schedules by looking at the node's aggregate resources. It does not know the remaining CPU, memory, and GPU locality per NUMA node. As a result, the scheduler can send a pod to a node where the kubelet then rejects it at topology admission.
 
-이 gap을 줄이려면 topology-aware scheduling이 필요하다.
+To close this gap, topology-aware scheduling is needed.
 
 ```mermaid
 flowchart LR
@@ -233,39 +233,39 @@ flowchart LR
 
 | Component | Role |
 | --- | --- |
-| `NodeResourceTopology` CRD | node별 NUMA resource 정보를 cluster object로 표현 |
-| NFD Topology Updater | kubelet PodResources API 등을 보고 NUMA별 available resource를 갱신 |
-| `NodeResourceTopologyMatch` scheduler plugin | scheduler가 topology constraint를 고려해 node를 filter/score |
+| `NodeResourceTopology` CRD | expresses per-node NUMA resource information as a cluster object |
+| NFD Topology Updater | inspects the kubelet PodResources API and updates available resources per NUMA node |
+| `NodeResourceTopologyMatch` scheduler plugin | the scheduler filters/scores nodes taking topology constraints into account |
 
-이 구성을 넣으면 scheduler가 "총량은 충분하지만 단일 NUMA node에는 부족한 node"를 미리 걸러낼 수 있다. 단점은 platform team이 운영해야 할 component가 늘어난다는 점이다. DaemonSet, CRD, scheduler plugin cache, update interval을 모두 이해해야 한다.
+With this setup, the scheduler can pre-filter nodes that "have enough in total but not enough on a single NUMA node". The downside is that the platform team has more components to operate. It must understand the DaemonSet, the CRD, the scheduler plugin cache, and the update interval.
 
-## Platform team과 workload owner의 계약
+## The Contract Between the Platform Team and the Workload Owner
 
-원문에서 가장 실무적인 부분은 NUMA alignment가 platform team 혼자 해결할 수 있는 문제가 아니라는 점이다. Workload owner도 sizing constraint를 이해해야 한다.
+The most practical part of the original is that NUMA alignment is not a problem the platform team can solve alone. Workload owners must also understand the sizing constraints.
 
-Platform team이 제공해야 할 정보:
+Information the platform team must provide:
 
 | Information | Why it matters |
 | --- | --- |
-| node pool SKU | core count, GPU count, NIC placement가 SKU마다 다름 |
-| NUMA geometry | NUMA node별 core, memory, GPU mapping |
-| NPS mode | AMD EPYC에서 socket이 몇 NUMA node로 쪼개지는지 결정 |
-| system/kube reserved CPU | workload가 실제로 쓸 수 있는 NUMA별 allocatable CPU 계산 |
-| recommended CPU per GPU | pod sizing이 NUMA node 안에 들어오게 유도 |
+| node pool SKU | core count, GPU count, and NIC placement differ per SKU |
+| NUMA geometry | core, memory, and GPU mapping per NUMA node |
+| NPS mode | determines how many NUMA nodes a socket is split into on AMD EPYC |
+| system/kube reserved CPUs | computing the allocatable CPUs per NUMA node that workloads can actually use |
+| recommended CPUs per GPU | steers pod sizing to fit inside a NUMA node |
 | enabled constraints | `full-pcpus-only`, `single-numa-node`, topology scope, Memory Manager |
-| expected failure modes | `SMTAlignmentError`, `TopologyAffinityError`를 workload owner가 이해해야 함 |
+| expected failure modes | workload owners must understand `SMTAlignmentError` and `TopologyAffinityError` |
 
-Workload owner가 해야 할 일:
+What the workload owner must do:
 
 | Action | Why it matters |
 | --- | --- |
-| CPU/memory request를 실제 peak에 맞춤 | Guaranteed QoS와 admission success에 필요 |
-| 한 NUMA node 안에 들어가는 pod size 선택 | 큰 pod 하나보다 작은 NUMA-local pod 여러 개가 나을 수 있음 |
-| even CPU request 사용 | `full-pcpus-only` node pool에서 필요 |
-| sidecar/init container 확인 | pod QoS와 topology scope에 영향 |
-| SKU 변경 시 sizing 재검토 | NUMA geometry는 hardware와 BIOS setting에 따라 달라짐 |
+| match CPU/memory requests to the actual peak | needed for Guaranteed QoS and admission success |
+| choose a pod size that fits in one NUMA node | several small NUMA-local pods can be better than one large pod |
+| use even CPU requests | required on `full-pcpus-only` node pools |
+| check sidecar/init containers | affects pod QoS and topology scope |
+| re-check sizing on SKU changes | NUMA geometry varies with hardware and BIOS settings |
 
-## 검증 명령
+## Verification Commands
 
 Node topology:
 
@@ -288,76 +288,76 @@ Kubelet policy:
 kubectl describe node <node-name>
 ```
 
-Pod event 확인:
+Pod events:
 
 ```bash
 kubectl describe pod <pod-name>
 kubectl get events --sort-by=.lastTimestamp
 ```
 
-확인할 것은 단순히 pod가 Running인지가 아니다. CPU affinity가 기대한 NUMA node 안에 들어오는지, GPU가 그 NUMA node에 붙어 있는지, memory request가 해당 NUMA node 안에 들어갈 수 있는지 봐야 한다.
+The point is not simply whether the pod is Running. You must check whether the CPU affinity lands inside the expected NUMA node, whether the GPU is attached to that NUMA node, and whether the memory request can fit inside that NUMA node.
 
-## DRA와 향후 방향
+## DRA and Future Direction
 
-원문은 Kubernetes DRA(Dynamic Resource Allocation) CPU driver를 future direction으로 언급한다. DRA는 resource allocation을 더 scheduling layer에 가깝게 끌어올려, kubelet admission 단계에서 뒤늦게 실패하는 문제를 줄일 가능성이 있다.
+The original mentions the Kubernetes DRA (Dynamic Resource Allocation) CPU driver as a future direction. DRA lifts resource allocation closer to the scheduling layer, which may reduce the problem of failing late at the kubelet admission stage.
 
-다만 글에서는 아직 충분히 검증하지 않았기 때문에 권장안으로 제시하지는 않는다. 현재 production 판단에서는 CPU Manager, Topology Manager, Memory Manager, topology-aware scheduler plugin 조합이 더 직접적인 선택지다.
+However, the article does not present it as a recommendation because it has not yet been sufficiently validated. For current production decisions, the combination of CPU Manager, Topology Manager, Memory Manager, and a topology-aware scheduler plugin is the more direct choice.
 
-## Training workload에 적용하기
+## Applying This to Training Workloads
 
-Training에서는 다음 상황에서 NUMA alignment를 우선 검토한다.
+In training, review NUMA alignment first in the following situations.
 
 | Symptom | First checks |
 | --- | --- |
 | GPU utilization sawtooth | dataloader wait time, CPU affinity, pinned memory NUMA locality |
-| step time variance 증가 | CPU run queue, remote memory access, I/O wait |
-| NCCL bandwidth 낮음 | GPU/NIC locality, `nvidia-smi topo -m`, selected interface |
+| step time variance increase | CPU run queue, remote memory access, I/O wait |
+| low NCCL bandwidth | GPU/NIC locality, `nvidia-smi topo -m`, selected interface |
 | MoE all-to-all variance | GPU/NIC topology, CPU scheduling jitter, expert placement |
-| host memory pressure | cgroup memory limit, Memory Manager, NUMA별 free memory |
+| host memory pressure | cgroup memory limit, Memory Manager, free memory per NUMA node |
 
-큰 training job은 보통 GPU 수와 network topology를 먼저 본다. 하지만 node 안에서 CPU와 memory가 GPU-local하지 않으면 expensive accelerator가 batch를 기다릴 수 있다.
+Large training jobs usually look at GPU count and network topology first. But if the CPU and memory are not GPU-local inside the node, expensive accelerators can end up waiting for batches.
 
-## Inference workload에 적용하기
+## Applying This to Inference Workloads
 
-Inference에서는 다음 질문이 중요하다.
+In inference, the following questions matter.
 
 | Question | Why it matters |
 | --- | --- |
-| tokenizer와 batching thread가 GPU-local CPU에서 도는가? | TTFT와 p99 latency에 영향 |
-| pod CPU가 두 socket에 걸치는가? | H2D path와 cache locality가 흔들릴 수 있음 |
-| GPU plugin이 NUMA topology hint를 제공하는가? | Topology Manager가 CPU-GPU locality를 강제할 수 있는 전제 |
-| p99가 특정 node/pod에서만 높은가? | misaligned pod가 조용히 serving 중일 수 있음 |
-| 큰 pod 하나보다 작은 replica 여러 개가 나은가? | NUMA-local sizing과 autoscaling 효율 |
+| do the tokenizer and batching threads run on GPU-local CPUs? | affects TTFT and p99 latency |
+| does the pod's CPU span two sockets? | the H2D path and cache locality can become unstable |
+| does the GPU plugin provide NUMA topology hints? | the premise for the Topology Manager to enforce CPU-GPU locality |
+| is p99 high only on specific nodes/pods? | a misaligned pod may be quietly serving |
+| are several small replicas better than one large pod? | NUMA-local sizing and autoscaling efficiency |
 
-LLM serving에서는 GPU kernel 최적화만으로 p99를 설명할 수 없다. CPU preprocessing, scheduler, memory copy, postprocessing이 GPU 앞뒤에 붙어 있기 때문에 NUMA locality는 serving path의 일부다.
+In LLM serving, GPU kernel optimization alone cannot explain p99. CPU preprocessing, scheduling, memory copies, and postprocessing sit before and after the GPU, so NUMA locality is part of the serving path.
 
-## 실무 결론
+## Practical Conclusions
 
-1. GPU workload의 CPU는 control plane만이 아니라 data path다.
-2. CPU pinning은 `cpuManagerPolicy: static`과 Guaranteed QoS 조건이 있어야 의미가 생긴다.
-3. `full-pcpus-only`는 physical core isolation을 주지만 CPU request 제약을 만든다.
-4. `single-numa-node`는 조용한 성능 저하를 admission failure로 바꾼다.
-5. Memory locality까지 보려면 `memoryManagerPolicy: Static`과 `reservedMemory`가 필요하다.
-6. Device plugin이 topology hint를 주지 않으면 Topology Manager가 CPU-GPU locality를 강제할 수 없다.
-7. 기본 scheduler는 NUMA별 잔여 resource를 모르므로 topology-aware scheduling이 필요할 수 있다.
-8. Platform team은 node pool별 NUMA geometry와 recommended pod size를 문서화해야 한다.
-9. Workload owner는 "CPU 몇 개"가 아니라 "한 NUMA node 안에 들어가는 CPU/memory/GPU 조합"으로 request를 설계해야 한다.
+1. The CPU of a GPU workload is a data path, not just a control plane.
+2. CPU pinning only becomes meaningful with `cpuManagerPolicy: static` and the Guaranteed QoS condition.
+3. `full-pcpus-only` gives physical core isolation but creates CPU request constraints.
+4. `single-numa-node` turns quiet performance degradation into an admission failure.
+5. To cover memory locality as well, `memoryManagerPolicy: Static` and `reservedMemory` are needed.
+6. If the device plugin does not provide topology hints, the Topology Manager cannot enforce CPU-GPU locality.
+7. The default scheduler does not know per-NUMA remaining resources, so topology-aware scheduling may be needed.
+8. The platform team must document the NUMA geometry and recommended pod sizes per node pool.
+9. Workload owners must design requests as "a CPU/memory/GPU combination that fits inside one NUMA node", not as "how many CPUs".
 
-## 이 레포와의 연결
+## Connection to This Repo
 
 | Topic | Connection |
 | --- | --- |
-| Chapter 3: OS, Docker, and Kubernetes Tuning | CPU Manager, Topology Manager, Memory Manager, Guaranteed QoS의 실무 적용 |
-| Chapter 4: Distributed Networking Communication | GPU/NIC locality와 RDMA/NCCL path 확인 |
+| Chapter 3: OS, Docker, and Kubernetes Tuning | practical application of CPU Manager, Topology Manager, Memory Manager, and Guaranteed QoS |
+| Chapter 4: Distributed Networking Communication | checking GPU/NIC locality and the RDMA/NCCL path |
 | Training notes | dataloader, pinned memory, MoE, step time variance |
 | Efficient LLM Inference Systems | tokenizer, batching, H2D copy, serving p99 tail latency |
-| Never Underestimate Memory Architecture | NUMA와 uncore가 왜 성능 모델의 일부인지 설명하는 배경 자료 |
+| Never Underestimate Memory Architecture | background material explaining why NUMA and uncore are part of the performance model |
 
-## 후속 질문
+## Follow-up Questions
 
-1. 현재 GPU node pool의 NUMA node별 CPU, memory, GPU, NIC mapping은 문서화되어 있는가?
-2. `nvidia-device-plugin`이 NUMA `TopologyInfo`를 제공하고 있는가?
-3. GPU pod는 Guaranteed QoS, integer CPU request, even CPU request 조건을 만족하는가?
-4. `single-numa-node`를 켰을 때 실패할 workload가 있는가?
-5. Scheduler가 NUMA별 잔여 resource를 보지 못해서 kubelet admission failure loop가 생길 수 있는가?
-6. Platform team이 workload owner에게 recommended CPU-per-GPU sizing matrix를 제공하고 있는가?
+1. Is the per-NUMA-node CPU, memory, GPU, and NIC mapping of the current GPU node pool documented?
+2. Does the `nvidia-device-plugin` provide NUMA `TopologyInfo`?
+3. Do GPU pods satisfy the Guaranteed QoS, integer CPU request, and even CPU request conditions?
+4. Are there workloads that would fail when `single-numa-node` is enabled?
+5. Can a kubelet admission failure loop occur because the scheduler cannot see per-NUMA remaining resources?
+6. Does the platform team provide workload owners with a recommended CPU-per-GPU sizing matrix?

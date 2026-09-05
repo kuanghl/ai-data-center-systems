@@ -1,6 +1,6 @@
 # Heterogeneous Systems (Onur Mutlu)
 
-A complementary course to [PMPP](../pmpp/, used in parallel for a
+A complementary course to [PMPP](../pmpp/), used in parallel for a
 second pass over the classic parallel patterns behind GPU kernels. Where PMPP is
 the spine, this course reinforces the same patterns from a computer-architecture
 angle and adds irregular workloads (sparse, graph).
@@ -12,7 +12,7 @@ angle and adds irregular workloads (sparse, graph).
 ## Parallel patterns
 
 Classical building blocks behind GPU kernels. Each pattern maps directly to a
-case study in [`labs/kernels`](../labs/kernels/.
+case study in [`labs/kernels`](../labs/kernels/).
 
 | Meeting | Topic | Kernel pattern |
 |---|---|---|
@@ -31,7 +31,7 @@ case study in [`labs/kernels`](../labs/kernels/.
 - Watch a PMPP lecture on a pattern, then the matching meeting here for a second
   explanation.
 - After both, implement and profile the pattern in
-  [`labs/kernels`](../labs/kernels/.
+  [`labs/kernels`](../labs/kernels/).
 
 ## Notes
 

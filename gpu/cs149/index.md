@@ -41,7 +41,7 @@ For this repository, read CS149 with these questions in mind:
 
 | Lecture | Topic | Notes |
 | ------- | ----- | ----- |
-| 1 | Why Parallelism? Why Efficiency? | [lec01](lec01/ |
-| 2 | A Modern Multi-Core Processor | [lec02](lec02/ |
-| 3 | Multi-Core Architecture, Part II and ISPC | [lec03](lec03/ |
-| 4 | Parallel Programming Basics | [lec04](lec04/ |
+| 1 | Why Parallelism? Why Efficiency? | [lec01](lec01/) |
+| 2 | A Modern Multi-Core Processor | [lec02](lec02/) |
+| 3 | Multi-Core Architecture, Part II and ISPC | [lec03](lec03/) |
+| 4 | Parallel Programming Basics | [lec04](lec04/) |
